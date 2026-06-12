@@ -1,0 +1,26 @@
+appId: {{APP_ID}}
+name: smoke
+tags:
+  - smoke
+---
+# Boot via dev-login → assert the signed-in tab layout → tab through all five tabs.
+# Prereqs:
+#   1. Metro running via the project's dev command ({{DEV_COMMAND}}) (bakes EXPO_PUBLIC_DEV_LOGIN=1 +
+#      apps/mobile/.env.local creds; dev-login also skips the biometric lock).
+#   2. The Expo dev client installed + previously connected to Metro (:8081) so a
+#      plain launchApp auto-reconnects. NO clearState — it wipes the saved Metro
+#      URL on a dev client and strands the app on the server-picker launcher.
+#   3. The sim-test seed applied (the seeded account lands signed-in past onboarding).
+#
+# Selectors are testID-only. RN <Text> (e.g. a display-text greeting)
+# is matchable via `maestro hierarchy` but flaky to match in-test through XCUITest;
+# testIDs (accessibilityIdentifier) match reliably. The bottom tab bar (`tab-*`) only
+# mounts in the authenticated layout, so waiting on the boot sentinel proves a real session
+# loaded (welcome/onboarding have no tab bar) — riding out the cold dev-client reload
+# + async dev-login.
+- runFlow: common/boot.yaml
+# {{TAB_SWEEP}} — one tapOn per primary-nav testid, e.g.:
+# - tapOn: { id: "tab-<name>" }
+- assertVisible:
+    id: "{{BOOT_SENTINEL_TESTID}}"
+- takeScreenshot: {{EVIDENCE_DIR}}/smoke-home

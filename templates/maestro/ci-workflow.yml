@@ -1,0 +1,144 @@
+name: {{CI_NAME}}
+
+# Maestro flows on the self-hosted Mac runner (free-tier plan Phase 3).
+# The self-hosted Mac sidesteps the native-build/signing problem entirely: the
+# dev client is already installed on the simulator; CI starts Metro from the
+# checkout and relaunches the app. The self-hosted Mac
+# sidesteps the build entirely: the Expo DEV CLIENT is already installed on
+# the simulator; CI starts Metro from the PR checkout, relaunches the app
+# (which fetches the PR's JS bundle), and runs the flows.
+#
+# SCOPE / LIMITS:
+#   - JS/TS changes only. Native config changes (app.json plugins, new native
+#     modules) are NOT exercised — the dev-client binary on the sim predates
+#     them. Rebuild the client manually (the dev-client build command) after native
+#     changes.
+#   - One simulator → one run at a time (concurrency group, queued not
+#     canceled). PR runs do smoke only; full pack on dispatch/nightly/label.
+#   - The runner Mac must be awake with the sim's dev client installed
+#     (one-time the dev-client build command). Offline runner queues the run.
+#   - Secrets E2E_DEV_LOGIN_EMAIL / E2E_DEV_LOGIN_PASSWORD are the
+#     prod sandbox creds, baked into a __DEV__ bundle only.
+#   - Port 8081 guard: if a Metro is already running (interactive dev
+#     session), the run fails fast rather than hijacking it.
+#
+# Remote sessions (free-tier plan Phase 4): trigger + collect without a Mac:
+#   gh workflow run "{{CI_NAME}}" --ref <branch> -f suite=full
+#   gh run watch && gh run download -n maestro-artifacts
+
+on:
+  pull_request:
+    paths:
+      - {{APP_PATHS}}   # one glob per app-code path
+  schedule:
+    - cron: "0 9 * * *" # nightly full pack (queues if the runner Mac is asleep)
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Which pack to run"
+        type: choice
+        options: [smoke, features, full]
+        default: full
+
+concurrency:
+  group: maestro-e2e-simulator # one shared simulator — queue, never cancel
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: {{CI_RUNNER}}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: {{WORKDIR}}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard — port 8081 free
+        working-directory: .
+        run: |
+          if lsof -nP -ti :8081 >/dev/null 2>&1; then
+            echo "::error::Port 8081 busy — an interactive Metro session owns the simulator. Re-run when it's free."
+            exit 1
+          fi
+
+      - name: Install deps
+        working-directory: .
+        run: npm ci
+
+      - name: Write dev-login env
+        run: |
+          cat > {{DEV_LOGIN_ENV_FILE}} <<EOF
+          EXPO_PUBLIC_DEV_LOGIN_EMAIL=${{ secrets.E2E_DEV_LOGIN_EMAIL }}
+          EXPO_PUBLIC_DEV_LOGIN_PASSWORD=${{ secrets.E2E_DEV_LOGIN_PASSWORD }}
+          EOF
+
+      - name: Boot simulator + verify dev client
+        run: |
+          UDID=$(xcrun simctl list devices booted -j | python3 -c "import json,sys; ds=[d for v in json.load(sys.stdin)['devices'].values() for d in v]; print(ds[0]['udid'] if ds else '')")
+          if [ -z "$UDID" ]; then
+            UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; ds=[d for k,v in json.load(sys.stdin)['devices'].items() if 'iOS' in k for d in v if d['name'].startswith('iPhone')]; print(ds[0]['udid'] if ds else '')")
+            [ -n "$UDID" ] || { echo "::error::No available iPhone simulator"; exit 1; }
+            xcrun simctl boot "$UDID"
+            xcrun simctl bootstatus "$UDID" -b
+          fi
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl listapps "$UDID" | grep -q {{APP_ID}} || {
+            echo "::error::Dev client {{APP_ID}} not installed on the simulator — run 'the dev-client build command' once on the runner Mac."; exit 1; }
+
+      - name: Start Metro (dev-login)
+        run: |
+          nohup {{DEV_COMMAND}} > /tmp/metro-ci.log 2>&1 &
+          echo $! > /tmp/metro-ci.pid
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8081/status >/dev/null 2>&1 && exit 0
+            sleep 2
+          done
+          echo "::error::Metro did not come up"; tail -50 /tmp/metro-ci.log; exit 1
+
+      - name: Relaunch app on fresh bundle
+        run: |
+          xcrun simctl terminate "$UDID" {{APP_ID}} 2>/dev/null || true
+          xcrun simctl launch "$UDID" {{APP_ID}}
+
+      - name: Run Maestro
+        run: |
+          SUITE="${{ github.event.inputs.suite }}"
+          if [ -z "$SUITE" ]; then
+            if [ "${{ github.event_name }}" = "pull_request" ]; then SUITE=smoke; else SUITE=full; fi
+          fi
+          export PATH="$HOME/.maestro/bin:/opt/homebrew/opt/openjdk/bin:$PATH"
+          case "$SUITE" in
+            smoke)    maestro test --include-tags smoke {{FLOWS_DIR}} ;;
+            features) maestro test --include-tags features {{FLOWS_DIR}} ;;
+            full)     maestro test {{FLOWS_DIR}} ;;
+          esac
+
+      - name: Upload evidence artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts
+          path: {{EVIDENCE_DIR}}
+          if-no-files-found: warn
+          retention-days: 14
+
+      # The runner Mac's ~/.maestro/tests accumulates every local session's
+      # debug output — only ship it when this run actually failed.
+      - name: Upload debug output (failure only)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-debug
+          path: ~/.maestro/tests/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Stop Metro
+        if: always()
+        run: |
+          [ -f /tmp/metro-ci.pid ] && kill "$(cat /tmp/metro-ci.pid)" 2>/dev/null || true
+          lsof -nP -ti :8081 | xargs kill 2>/dev/null || true
