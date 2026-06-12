@@ -1,0 +1,11 @@
+{
+  "name": "builderkit",
+  "owner": { "name": "malikriv" },
+  "plugins": [
+    {
+      "name": "builderkit",
+      "source": "./",
+      "description": "Ship-feature pipeline + 4-phase e2e testing + Linear integration for studio projects."
+    }
+  ]
+}
