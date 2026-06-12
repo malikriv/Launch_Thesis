@@ -53,7 +53,7 @@ Hosted runner (`testing.ci.runner`, usually `ubuntu-latest`):
 `npx playwright install --with-deps chromium`, run `@smoke` on PRs, full pack
 on workflow_dispatch + nightly cron. Upload `testing.evidence_dir` always; upload
 `playwright-report/` + traces on failure only. Same remote-session commands
-as every driver (`gh workflow run` → `gh run download`).
+as every driver (`gh workflow run` → `gh run download -n e2e-evidence`).
 
 ## Notes (hard-won, web)
 

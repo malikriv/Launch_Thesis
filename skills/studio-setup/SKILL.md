@@ -81,7 +81,8 @@ one into the project, substitute every double-brace token from config:
 Hand-authored tokens (no config key — the agent writes project-specific
 lines in their place): `TAB_SWEEP` (one tapOn per primary-nav testid),
 `NAV_SWEEP` (one getByTestId click + assert per primary surface),
-`SEED_MODULE` (the seed fixture import/inline in auth.setup).
+`SEED_MODULE` (the seed fixture import/inline in auth.setup),
+`DEV_CLIENT_BUILD_COMMAND` (the project's one-time dev-client native build command (maestro only), e.g. an expo run:ios script wired to the dev-login env).
 
 ## Drift repair
 

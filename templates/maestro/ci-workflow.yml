@@ -11,12 +11,12 @@ name: {{CI_NAME}}
 # SCOPE / LIMITS:
 #   - JS/TS changes only. Native config changes (app.json plugins, new native
 #     modules) are NOT exercised — the dev-client binary on the sim predates
-#     them. Rebuild the client manually (the dev-client build command) after native
+#     them. Rebuild the client manually ({{DEV_CLIENT_BUILD_COMMAND}}) after native
 #     changes.
 #   - One simulator → one run at a time (concurrency group, queued not
 #     canceled). PR runs do smoke only; full pack on dispatch/nightly/label.
 #   - The runner Mac must be awake with the sim's dev client installed
-#     (one-time the dev-client build command). Offline runner queues the run.
+#     (one-time {{DEV_CLIENT_BUILD_COMMAND}}). Offline runner queues the run.
 #   - Secrets E2E_DEV_LOGIN_EMAIL / E2E_DEV_LOGIN_PASSWORD are the
 #     prod sandbox creds, baked into a __DEV__ bundle only.
 #   - Port 8081 guard: if a Metro is already running (interactive dev
@@ -87,7 +87,7 @@ jobs:
           fi
           echo "UDID=$UDID" >> "$GITHUB_ENV"
           xcrun simctl listapps "$UDID" | grep -q {{APP_ID}} || {
-            echo "::error::Dev client {{APP_ID}} not installed on the simulator — run 'the dev-client build command' once on the runner Mac."; exit 1; }
+            echo "::error::Dev client {{APP_ID}} not installed on the simulator — run '{{DEV_CLIENT_BUILD_COMMAND}}' once on the runner Mac."; exit 1; }
 
       - name: Start Metro (dev-login)
         run: |
