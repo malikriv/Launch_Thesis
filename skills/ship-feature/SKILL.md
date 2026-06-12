@@ -228,16 +228,17 @@ A failed gate loops back to Phase 5 — never ship around a failed gate.
 
 ## Linear historian (team `linear.team` — `linear.url`)
 
+Mechanics (ticket model, MCP fallback, status discipline, native attachment
+upload, completion-comment format) live in
+`${CLAUDE_PLUGIN_ROOT}/skills/linear/SKILL.md` Part A — follow them for every
+item. This section maps pipeline phases to journal content.
+
 Every intake item gets its OWN Linear issue — one ticket per fix/feature, not
-one per pipeline run — so each unit of work is individually trackable and
-future agents can use the tickets as context. A multi-item wave additionally
-gets a parent issue; per-item issues link to it (sub-issues or "part of").
-Use the Linear MCP tools when available; fall back to the Linear GraphQL API
-with a personal API key. **If neither is reachable, surface that to the user
-IMMEDIATELY at Phase 0** (the OAuth link or the missing-key fact, in the
-first reply) — never defer it to the final summary. The pipeline itself still
-proceeds — the spec doc stays the source of truth — and every ticket is
-backfilled the moment access exists, in the same session when possible.
+one per pipeline run. A multi-item wave additionally gets a parent issue;
+per-item issues link to it (sub-issues or "part of").
+
+Access + fallback rules: linear skill Part A item 2 — surface missing access
+IMMEDIATELY at Phase 0.
 
 Each per-item issue accumulates across phases:
 
@@ -257,25 +258,17 @@ Each per-item issue accumulates across phases:
 4. **Phase 7** — comment: **evidence of the fix** — gate results verbatim
    (typecheck output, unit-suite counts), divergences from the literal
    request, and any owed gates flagged loudly. **A screenshot proving the
-   implemented behavior is
-   MANDATORY on every ticket** — not optional, not "when available": the
-   driver's named evidence artifact for the item's flow (preferred —
-   `<R-id>-<step>.png`, deterministic, regenerated every run), else a device/browser capture of the after-state (per the driver doc). Attach it natively
-   (`prepare_attachment_upload` → PUT → `create_attachment_from_upload`), do
-   not just link a file path. A ticket without an attached evidence
-   screenshot is not done journaling. For non-visual changes (API-only,
-   types), the screenshot shows the user-observable consequence (e.g. the
-   screen that no longer misbehaves) — there is always a surface that proves
-   the fix; if recon truly can't name one, say so explicitly on the ticket
-   and attach the test output instead.
+   implemented behavior is MANDATORY on every ticket.** Evidence +
+   native-upload mechanics per the linear skill Part A item 4.
 5. **Phase 8** — comment: commit SHA(s) + **PR link** + the fix version (the release version if the project tracks one, else branch/PR); status → **In Review**. Only the
    user's merge/ship moves it to **Done** — never close it yourself.
 
-The parent wave issue (when one exists) carries the Phase 0.5 prioritization
-table, the spec link, and rollup comments that span items.
+Parent wave issue (when one exists): carries the Phase 0.5 prioritization table
+and the spec link, plus rollup comments that span items — linear skill Part A
+item 1.
 
-- **As context** — before recon, search Linear for prior issues touching the
-  same surface and feed relevant ones to the recon agents.
+**As context** — before recon, search Linear for prior issues touching the same
+surface and feed relevant ones to the recon agents — linear skill Part A item 6.
 
 ## Multi-agent quick reference
 
