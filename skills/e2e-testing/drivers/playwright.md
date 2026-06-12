@@ -23,6 +23,9 @@ pick per app:
 
 All test projects depend on the setup project and load the saved state, so
 every spec starts signed-in/seeded with zero UI typing.
+`${CLAUDE_PLUGIN_ROOT}/templates/playwright/playwright.config.template.ts`
+wires it as a `setup` project that the browser projects depend on (merge into
+an existing Playwright config rather than overwriting).
 
 ## Phase 2 — Seed + selectors
 
@@ -40,8 +43,9 @@ every spec starts signed-in/seeded with zero UI typing.
 - Evidence via the `evidence()` helper
   (`${CLAUDE_PLUGIN_ROOT}/templates/playwright/evidence.ts`):
   `await evidence(page, 'R3-after-save')` → PNG into `testing.evidence_dir`.
-- `trace: 'on-first-retry'` in the Playwright config; traces are the debug
-  artifact, evidence PNGs are the proof artifact — keep them separate.
+- `trace: 'on-first-retry'` in the Playwright config (ships in the config
+  template); traces are the debug artifact, evidence PNGs are the proof
+  artifact — keep them separate.
 
 ## Phase 4 — CI gate
 

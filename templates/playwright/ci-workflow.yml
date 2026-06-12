@@ -2,12 +2,13 @@ name: {{CI_NAME}}
 
 on:
   pull_request:
-    paths: {{APP_PATHS}}
+    paths: {{APP_PATHS}}   # YAML list — one glob per app-code path
   schedule:
     - cron: "0 9 * * *"   # nightly full pack
   workflow_dispatch:
     inputs:
       suite:
+        description: "Which pack to run"
         type: choice
         options: [smoke, full]
         default: full

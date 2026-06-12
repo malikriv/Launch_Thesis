@@ -40,7 +40,7 @@ if [ "${1:-}" = "--complete" ]; then
     skills/studio-setup/SKILL.md skills/ship-feature/SKILL.md skills/linear/SKILL.md \
     skills/e2e-testing/SKILL.md skills/e2e-testing/drivers/maestro.md skills/e2e-testing/drivers/playwright.md \
     templates/maestro/boot.yaml templates/maestro/smoke.yaml templates/maestro/ci-workflow.yml \
-    templates/playwright/auth.setup.ts templates/playwright/evidence.ts templates/playwright/smoke.spec.ts templates/playwright/ci-workflow.yml; do
+    templates/playwright/auth.setup.ts templates/playwright/evidence.ts templates/playwright/smoke.spec.ts templates/playwright/ci-workflow.yml templates/playwright/playwright.config.template.ts; do
     [ -f "$f" ] || err "missing required file: $f"
   done
 fi
