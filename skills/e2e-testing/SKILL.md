@@ -12,8 +12,7 @@ description: >
 # BuilderKit e2e testing system
 
 Read `.builderkit/config.yaml` first. No config → stop and point the user at
-`/builderkit:setup`. Then read `drivers/<testing.driver>.md` in this skill's
-directory — it holds the platform-specific rules. This file holds the rules
+`/builderkit:setup`. Then read `${CLAUDE_PLUGIN_ROOT}/skills/e2e-testing/drivers/<testing.driver>.md` — it holds the platform-specific rules. (Paths under `${CLAUDE_PLUGIN_ROOT}` resolve to the plugin install, not the working directory.) This file holds the rules
 that are true on every platform.
 
 ## The four phases (each independently useful)
@@ -21,16 +20,16 @@ that are true on every platform.
 1. **Real-auth dev-login.** Tests must run against a REAL signed-in session,
    not a stub bypass — authed API calls are the bug class stubs can't reach.
    The mechanism is driver-specific (env-creds baked into a dev build vs a
-   saved storage state); the invariant is: `commands.dev` boots straight into
+   saved storage state) — recorded as `testing.dev_login.mode`; the invariant is: `commands.dev` boots straight into
    a signed-in session with zero manual typing, and the mechanism is
    dev-only (never ships: build-flag gated and/or gitignored).
 2. **Seeded test state + stable selectors.** A dedicated test account/fixture
-   (`testing.seed`) with a KNOWN state the flows assert against, re-appliable
-   for a clean reset. Every element a flow targets gets a stable selector
+   (`testing.seed.account`) with a KNOWN state the flows assert against, re-appliable
+   for a clean reset via `testing.seed.seed_file`. Every element a flow targets gets a stable selector
    (testID / data-testid) — never match on display text.
 3. **Per-requirement flows + evidence.** One smoke flow (boot + primary-nav
    sweep) plus one flow per shipped requirement, named after the requirement
-   ID. Every flow captures named screenshots (`<R-id>-<step>`) into
+   ID, in `testing.flows_dir`. Every flow captures named screenshots (`<R-id>-<step>`) into
    `testing.evidence_dir`. Those PNGs are the verification evidence attached
    to Linear tickets and PRs.
 4. **CI gate.** The suite runs in CI (`testing.ci.workflow`) on every PR
@@ -53,6 +52,6 @@ that are true on every platform.
 
 ## Scaffolding
 
-Templates live in the plugin's `templates/<driver>/` directory. Use
+Templates live in `${CLAUDE_PLUGIN_ROOT}/templates/<driver>/`. Use
 `/builderkit:setup` (phased) to scaffold; `/builderkit:e2e` to run packs or
 add a new flow from the conventions above.
