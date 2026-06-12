@@ -3,7 +3,7 @@ name: ship-feature
 description: >
   Production-grade delivery pipeline for any feature request, bug report, design
   correction, or user feedback that changes app behavior. Runs intake → behavior
-  recon (simulator screenshots) → regression/risk analysis → implementation
+  recon (device/browser captures) → regression/risk analysis → implementation
   decision → written requirements → automated QA test plan → implementation +
   unit tests → verification gates → ship (commit, push, draft PR, CI watch).
   Supports multi-agent fan-out so recon and build work run in parallel without
@@ -84,7 +84,7 @@ Medium, fill-ins → Low.
 Launch the independent recon tracks **in a single message** so they run in
 parallel. Typical split:
 
-1. **Behavior recon (simulator)** — boot the app and capture the current
+1. **Behavior recon (device/browser)** — boot the app and capture the current
    behavior of every affected surface *before* changing anything.
    - Boot via `commands.dev` from `commands.workdir` and capture the current
      behavior of every affected surface before changing anything — the driver
@@ -157,9 +157,11 @@ Write `<docs.specs_dir>/YYYY-MM-DD-<slug>.md` containing:
    request, and why.
 6. **QA test plan** — a table: `ID | Requirement | Precondition | Steps |
    Expected | Automation`. Automation is one of `unit`, `component`, `e2e`,
-   `manual`. Every requirement gets at least one automated row; `manual` rows
-   are allowed only for things automation genuinely can't see (haptics, feel,
-   native transitions), and each one must say what the human should look at.
+   `manual` (`component` rows execute under `commands.unit` — same runner,
+   component-level assertions). Every requirement gets at least one automated
+   row; `manual` rows are allowed only for things automation genuinely can't
+   see (haptics, feel, native transitions), and each one must say what the
+   human should look at.
 
 ## Phase 5 — Build (parallel where safe)
 
@@ -188,8 +190,7 @@ reviewer can distinguish "requirement changed" from "test weakened".
 1. `commands.typecheck` — clean.
 2. Full `commands.unit` — every suite, not just the new ones.
 3. **Acceptance check** — walk the Phase 0 success criteria and the user's
-   specific values one by one; each must be observable in a test or a
-   simulator screenshot.
+   specific values one by one; each must be observable in a test or a device/browser screenshot (per the driver doc).
 4. **E2E gate (driver-first, per the builderkit e2e-testing skill):** every QA
    row marked `e2e` ships a committed flow in `testing.flows_dir` (tagged
    `features`, with named evidence screenshots `<R-id>-<step>` into
@@ -259,8 +260,7 @@ Each per-item issue accumulates across phases:
    implemented behavior is
    MANDATORY on every ticket** — not optional, not "when available": the
    driver's named evidence artifact for the item's flow (preferred —
-   `<R-id>-<step>.png`, deterministic, regenerated every run), else a
-   simulator capture of the after-state. Attach it natively
+   `<R-id>-<step>.png`, deterministic, regenerated every run), else a device/browser capture of the after-state (per the driver doc). Attach it natively
    (`prepare_attachment_upload` → PUT → `create_attachment_from_upload`), do
    not just link a file path. A ticket without an attached evidence
    screenshot is not done journaling. For non-visual changes (API-only,
@@ -268,8 +268,7 @@ Each per-item issue accumulates across phases:
    screen that no longer misbehaves) — there is always a surface that proves
    the fix; if recon truly can't name one, say so explicitly on the ticket
    and attach the test output instead.
-5. **Phase 8** — comment: commit SHA(s) + **PR link** + the fix version (app
-   MAJOR.MINOR if known, else branch/PR); status → **In Review**. Only the
+5. **Phase 8** — comment: commit SHA(s) + **PR link** + the fix version (the release version if the project tracks one, else branch/PR); status → **In Review**. Only the
    user's merge/ship moves it to **Done** — never close it yourself.
 
 The parent wave issue (when one exists) carries the Phase 0.5 prioritization
@@ -283,7 +282,7 @@ table, the spec link, and rollup comments that span items.
 | Work | Agent | Parallel? |
 |---|---|---|
 | Code/design recon | `Explore` (read-only) | Yes — always fan out with behavior recon |
-| Behavior recon (sim) | orchestrator (needs device control) | Alongside Explore agents |
+| Behavior recon (device/browser) | orchestrator (needs device control) | Alongside Explore agents |
 | Independent build workstreams | `general-purpose` / `claude`, disjoint files, worktree isolation | Yes, after the spec is written |
 | Spec writing, risk call, integration, gates, ship | orchestrator | Never delegated |
 
