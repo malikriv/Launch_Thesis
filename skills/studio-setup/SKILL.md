@@ -17,6 +17,7 @@ Read package.json(s), lockfiles, repo layout:
 - `vite`/`next` + web entry → stack `web-pwa`/`web`, driver `playwright`
 - existing e2e dirs (`.maestro/`, `e2e/`, `playwright.config.*`), CI
   workflows, test runners, monorepo workdir.
+- Monorepo with both (e.g. an Expo app plus a vite/next site): detect at the chosen `commands.workdir`; if that package has both, expo/RN wins (it's the shippable app). Surface the ambiguity in the Step 2 confirmation.
 - Linear MCP reachability (`list_teams`); note the team key for this product.
 
 ## Step 2 — Configure
@@ -39,7 +40,9 @@ each is independently useful.
    the auth.setup template as a setup project and merge the Playwright config
    template (never overwrite an existing playwright config — merge); fill
    variant A (server auth) or B (local-first seed) and delete the other (the
-   unused `expect` import is intentional until you pick). VERIFY:
+   unused `expect` import is intentional until you pick). Variant B seeds a
+   minimal inline fixture now; phase 2 promotes it to `testing.seed.seed_file`
+   and proves idempotent reset. VERIFY:
    `commands.dev` boots to a signed-in/seeded session with zero typing.
 2. **Seed + selectors.** Create/point at `testing.seed.seed_file`; add stable
    selectors (testID / data-testid) to every element the smoke flow will
