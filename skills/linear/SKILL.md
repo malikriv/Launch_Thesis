@@ -136,6 +136,7 @@ If no ID is provided, ask the user which issue to work on. Accepts a bare ID
 - Branch-or-direct per the repo's convention. **Prefer a feature branch + PR
   when CI exists** (so the suite runs); push direct to the default branch only
   when that's the repo's documented flow for the change class.
+- If the issue's design/request can't be implemented as described (missing schema, missing token), implement the closest correct version and document the divergence in the completion comment — never silently ship something different.
 
 ### B3. Verify
 
@@ -147,6 +148,7 @@ If no ID is provided, ask the user which issue to work on. Accepts a bare ID
   blind.
 - **Capture evidence per A4** as you verify — the named flow artifact or an
   after-state capture — for the close in B6.
+- Console warnings count: a new runtime warning/error introduced by the change (browser console, RN red-box, server log) is a verification failure — fix before commit.
 
 ### B4. Deploy & monitor
 
