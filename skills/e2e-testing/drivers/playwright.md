@@ -6,12 +6,16 @@ different mechanics. Config: `testing.driver: playwright`.
 ## Phase 1 — Real-auth dev-login → `storageState`
 
 `${CLAUDE_PLUGIN_ROOT}/templates/playwright/auth.setup.ts` scaffolds a setup
-project that produces `e2e/.auth/state.json` (gitignored). Two variants —
+project that produces `<testing.flows_dir>/.auth/state.json` (convention:
+`.auth/` lives inside `testing.flows_dir`; keep it gitignored wherever it
+lands). Two variants —
 pick per app:
 
 - **Server-auth app**: the setup signs in once with creds from env
   (`E2E_DEV_LOGIN_EMAIL` / `E2E_DEV_LOGIN_PASSWORD`, local source =
-  `testing.dev_login.env_file`) and saves cookies + localStorage.
+  `testing.dev_login.env_file`) — read directly at test runtime; unlike the
+  Maestro driver there is no rebake-into-the-bundle step, the same names serve
+  as CI secrets and runtime vars — and saves cookies + localStorage.
 - **Local-first app (no server auth)**: the setup seeds
   localStorage/IndexedDB directly with the fixture state (Phase 2's seed) and
   saves it. `storageState` covers both cases — that IS the dev-login
@@ -29,8 +33,9 @@ every spec starts signed-in/seeded with zero UI typing.
 
 ## Phase 3 — Flows + evidence
 
-- One `smoke.spec.ts` (boot → primary-nav sweep, tagged `@smoke`), then one
-  spec per requirement tagged `@features`, test names carrying the
+- One `smoke.spec.ts` (boot → primary-nav sweep, tagged `@smoke` (Playwright
+  tags are `@`-prefixed forms of the core's `smoke`/`features` packs)), then
+  one spec per requirement tagged `@features`, test names carrying the
   requirement ID, in `testing.flows_dir`.
 - Evidence via the `evidence()` helper
   (`${CLAUDE_PLUGIN_ROOT}/templates/playwright/evidence.ts`):
@@ -42,7 +47,7 @@ every spec starts signed-in/seeded with zero UI typing.
 
 Hosted runner (`testing.ci.runner`, usually `ubuntu-latest`):
 `npx playwright install --with-deps chromium`, run `@smoke` on PRs, full pack
-on dispatch/nightly. Upload `testing.evidence_dir` always; upload
+on workflow_dispatch + nightly cron. Upload `testing.evidence_dir` always; upload
 `playwright-report/` + traces on failure only. Same remote-session commands
 as every driver (`gh workflow run` → `gh run download`).
 
