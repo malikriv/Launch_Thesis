@@ -1,6 +1,6 @@
 {
   "name": "builderkit",
-  "version": "0.1.0",
-  "description": "App-studio orchestrator: discover (idea → hardened hypothesis), validate (48h guerrilla GTM sprint), ship-feature pipeline, 4-phase e2e testing (Maestro + Playwright), Linear historian. Per-project config in .builderkit/config.yaml.",
+  "version": "0.2.0",
+  "description": "App-studio orchestrator: product-strategy front-end (ThinkTank evaluation + product-design Play Audit) plus discover/validate (hypothesis hardening + 48h guerrilla GTM sprint), ship-feature pipeline, 4-phase e2e testing system (Maestro + Playwright drivers), Linear historian + lifecycle. Per-project config in .builderkit/config.yaml.",
   "author": { "name": "malikriv" }
 }
