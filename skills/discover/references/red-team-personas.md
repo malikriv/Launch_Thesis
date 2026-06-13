@@ -44,5 +44,3 @@ become sprint tests in the brief, never blockers.
 
 Everything else proceeds — Gate D is neutral triage ("no fatal flaw found on paper"),
 and the $50 sprint is the real backstop.
-
-NOTE: the line "tagged `{model-opinion | ...}`" above uses SINGLE braces `{` — that is fine. Do NOT change it to double braces.

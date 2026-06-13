@@ -89,7 +89,7 @@ Send the seed back to the drawing board ONLY on:
     >= 2 communities with non-zero standing), OR
 (c) an unresolved TOP-ranked assumption that is `model-opinion` with no cheap test
     path, OR
-(d) a D1 verdict of `nice-to-have`.
+(d) a D1 intensity verdict of `nice-to-have`.
 
 Loop action: sharpen ICP / problem / value-prop and re-run, or pivot the seed; record
 why. Bounded by `discover.red_team.max_rounds` — on exhaustion, stop and ask the human
