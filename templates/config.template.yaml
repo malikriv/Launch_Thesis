@@ -46,3 +46,66 @@ modules:
   delivery: true
   testing: true
   linear: true
+  discover: true
+  validate: true
+
+# ── discover module (idea → hardened hypothesis) ──
+discover:
+  red_team:
+    personas: 6
+    max_rounds: 3
+    kill_threshold: evidence_gated   # evidence_gated | majority | any | unanimous
+  reality_probe: { enabled: true, window_hours: 24, min_contacts_drafted: 10 }
+  specs_dir: {{SPECS_DIR}}           # reuse docs.specs_dir
+
+# ── validate module (48h live sprint + guerrilla GTM) — consumed in Plan 2 ──
+validate:
+  window_hours: 48
+  max_window_hours: 96               # marketplace / considered-purchase only
+  budget_cap_usd: 50
+  clock_start: first_qualified_impression
+  sprints_dir: .builderkit/studio/sprints
+  max_concurrent_sprints: 1          # serial-by-default; /validate refuses a 2nd open sprint
+  auto_post: false                   # founder posts from own accounts (C1 / ToS)
+  gate:
+    floor_users: 10
+    min_qualified_lands: 25          # exposure denominator
+    min_lp_visit_to_signup_rate: 0.05
+    rate_min_sample_visits: 40
+    require_pay_proof: true
+    hard_signal_default: paid        # paid | loi | scarce_action
+    allow_brief_override: true
+    weights: { payment: 5, loi: 5, scarce_action: 3, activation: 2, signup: 1, intent_click: 0 }
+    cohort_weights: { cold_public: 1.0, warm_dm: 0.5, friend: 0.25, unverifiable: 0 }
+    min_cold_weight_fraction: 0.6
+    max_friend_share: 0.4
+    exclude_self: true
+    founder_identifiers: []          # emails/handles/cards dropped at ingestion
+    pay_proof:
+      mode_default: preauth_hold     # preauth_hold (default) | real_charge (opt-in)
+      captured: false                # true only under real_charge
+      refundable: false
+      min_pct_of_price: 25
+      cold_required: true
+      live_mode_only: true
+    max_extensions: 1
+    max_repair_attempts: 3           # GATE-NOT-MEASURABLE repair loop
+    message_variants_before_kickback: 2
+    kill_attribution: { min_qualified_lands: 30 }
+  delivery: { max_days_to_first_access: 30 }
+  gtm:
+    named_list_target: 30
+    min_warm_channels: 1
+    default_channel_order: [direct_outreach, intent_venues, borrowed_distribution, broadcast]
+  deploy:   { provider: {{DEPLOY_PROVIDER}}, project: {{DEPLOY_PROJECT}} }
+  data:     { provider: {{DATA_PROVIDER}},   project: {{DATA_PROJECT}} }
+  payments: { provider: {{PAY_PROVIDER}},    mode: preauth_hold }
+  max_rounds: 3                      # GTM/relaunch + message-variation loops
+
+# ── studio (cross-product learning loop) ──
+studio:
+  enabled: true
+  dir: .builderkit/studio
+  success_criterion: ">=N retained paying users 30 days after first ship"
+  promote_after_k: 2
+  max_concept_cycles: 3              # global discover<->validate round-trips per seed
