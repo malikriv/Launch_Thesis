@@ -1,164 +1,209 @@
-# BuilderKit — front-end reconciliation (discover ⊃ evaluate; audit retargeted)
+# BuilderKit — front-end reconciliation (demand-first, tiered, looped)
 
 Date: 2026-06-13
-Status: approved design, pre-implementation
+Status: approved design (rev 2 — demand-first), pre-implementation
 Author: malikriv (with Claude Code)
+
+> Rev 2 supersedes the rev-1 "discover-first" reconciliation after a devil's-advocate
+> pass. The objective is **maximum successful launches** (plural), so the funnel is
+> re-architected to optimize **speed-to-real-signal** and **portfolio throughput**:
+> cheap kills first, the expensive machinery only on ideas the market already nodded
+> at, the build audit *before* the real validation sprint, and a closing learning loop.
 
 ## 1. Context
 
-BuilderKit grew two overlapping front-of-pipeline capabilities in parallel tracks:
+BuilderKit grew two overlapping front-of-pipeline capabilities:
 
-- **`product-strategy`** (PR #2, open): `/builderkit:evaluate` (idea → go/no-go +
-  MVP spec) **+** `/builderkit:audit` (validated product → ranked, brand-safe build
-  list of design plays).
+- **`product-strategy`** (PR #2, open): `/builderkit:evaluate` (idea → go/no-go) +
+  `/builderkit:audit` (validated product → ranked, brand-safe build list of plays).
 - **`discover`** (PR #1, merged) + **`validate`** (Plan 2, unbuilt): seed → hardened
-  hypothesis (symmetric need assessment, multi-agent red-team, reality probe,
-  Gate D) → 48h live GTM sprint with a hard cold pay-proof gate (Gate V).
+  hypothesis (red-team, reality probe, Gate D) → 48h live cold-pay-proof sprint (Gate V).
 
-`evaluate` and `discover` overlap at the "should I build this idea" seam (market
-scan, wedge, go/no-go, an MVP-spec-shaped output). `audit` is **unique and
-complementary** — nothing in discover/validate produces a prioritized build list of
-design plays. Decision (chosen): **fold `evaluate` into `discover`; keep `audit` as
-the post-validation build planner.** The reconciled chain:
-
-```
-idea/seed → /discover → /validate → /audit → /ship → e2e → Linear
-            should I    demand      plan the   build
-            build it?   real?       build well
-```
+`evaluate` and `discover` overlapped at the "should I build this" seam; `audit` is
+unique. Rather than a single heavy front door, reconcile into a **cheap-to-expensive,
+demand-first funnel** that gets to a real demand signal as early as possible.
 
 ## 2. Goals / non-goals
 
 **Goals**
-- One idea front door (`discover`), one demand test (`validate`), one build planner
-  (`audit`). No overlapping "evaluate the idea" stages.
-- Preserve every distinct capability: discover's red-team + reality probe, validate's
-  cold pay-proof gate, audit's play engine + flagging rules.
-- Land with `main` never seeing the redundant `evaluate` (PR #2 is still open).
+- Maximize successful *launches across many ideas*: kill losers cheap, reserve
+  expensive analysis + spend for ideas with a real market pulse, throughput first.
+- Get a real demand signal **before** the heavy multi-agent red-team.
+- Audit the conversion asset + distribution **before** the real validation sprint, so
+  the sprint is a fair test, not a sandbagged one.
+- Close a post-launch learning loop (studio) — "launch" = retained/paying, not shipped.
+- Preserve every distinct capability (red-team, reality probe, cold pay-proof gate,
+  play engine + flagging) and the IP posture (engine-only; deck via `playbook_ref`).
+- Land with `main` never seeing a redundant `evaluate` (PR #2 still open).
 
 **Non-goals**
 - Building `validate` (still Plan 2).
-- Changing the play-engine reference, the red-team personas, or the Gate D/V logic.
-- Any third-party-catalog change — the IP posture (engine-only, deck via
-  `product.playbook_ref`) is unchanged.
+- Changing the play-engine, red-team personas, or Gate D/V *pass criteria* (only the
+  *order* in which discover runs its phases changes).
+- New top-level commands (triage + smoke are discover tiers).
 
-## 3. What `discover` absorbs from `evaluate`
+## 3. The reconciled chain
 
-`discover` already covers evaluate's market scan (D1 symmetric assessment), its
-critique (D3 red-team incl. the moat/competitor critic), and distribution
-(D0 founder-access + the distribution-realist lens). It is missing four evaluate
-elements; add them:
+```
+ideas → /discover (tiered, demand-first) → /audit → /validate → /ship → e2e → Linear → Insight Loop ↺
+        triage → smoke → [pulse?] → harden    conv +    real 48h    build               studio writeback;
+        cheap    cheap    kill cheap  heavy     GTM plan  pay-proof                       next idea starts smarter
+```
 
-1. **Stated exit.** D0 framing and the brief gain a `exit_strategy` field (read from
-   `product.exit_strategy`, default "none"). Everything downstream is judged against
-   the exit.
-2. **Named wedge / defensibility.** The D4 brief gains an explicit `wedge` field —
-   "is it a *position* (defensible) or a *feature* (not); would an incumbent
-   structurally avoid copying it?" — recorded to `product.positioning`. The D3 moat
-   critic already pressure-tests it; this makes the output explicit.
-3. **Exit-safe framing check.** The D4 brief gains a short names/claims/trademark
-   check against the exit (an acquirer finds it clean, not litigious/manipulative).
-4. **Solution & intended-surfaces sketch.** The D4 brief gains a light list of the
-   intended product surfaces/screens so `/audit` has something to map plays onto
-   downstream.
+Each gate is **progressively more expensive**, so most ideas die before the costly
+stages, and founder time/money concentrate on ideas the market already nodded at.
 
-`discover` starts reading the shared `product:` config block
-(`exit_strategy`, `positioning`, `sensitive_category`). The Concept Brief +
-Hardened Hypothesis Brief remain discover's artifacts; no separate "MVP spec" is
-authored at this stage (the prioritized build spec is `audit`'s output — §4).
+## 4. `discover` — re-architected as a cheap-to-expensive funnel
 
-## 4. What `product-strategy` becomes
+Re-order discover's internals so the cheapest, most decisive tests run first and the
+expensive red-team runs last. The reality probe leaps ahead of the red-team.
 
-- **Drop Part A (Evaluate)** from `skills/product-strategy/SKILL.md`. The skill
-  becomes single-purpose: *turn a validated concept into a prioritized, brand-safe
-  build list.* (Keep the skill directory/name `product-strategy` — it is now the
-  build-planning module — to avoid churn.)
-- **Retarget the input.** Audit's input changes from "evaluate's A5 MVP spec" to:
-  the `discover` Hardened Hypothesis Brief (its solution/surfaces sketch) for a
-  not-yet-built concept that has passed `validate`, **or** an existing product's
-  surfaces. Update `skills/product-strategy/SKILL.md` Part B preamble and
-  `commands/audit.md` wording accordingly.
-- **`play-engine.md` is unchanged** (pattern library, strategy/metric tables,
-  pairing graph, flagging rules, Insight Loop).
-- Audit's output (the ranked play build list) is the actionable build spec each item
-  of which feeds `/builderkit:ship` — unchanged.
+### D0 — Frame (cheap)
+Idea/seed, ICP/population, archetype, **stated exit** (`product.exit_strategy`,
+default "none"), founder-access (communities + standing). Everything downstream is
+judged against the exit.
 
-## 5. `evaluate` removal
+### D1 — Triage gate (cheap; absorbs `evaluate`)
+A fast desk go/no-go in minutes: plausible **wedge** (position vs. feature)? a
+**cheaply-reachable audience** the founder can personally access? a **WTP path**?
+**exit-safe** on the face of it? Obvious losers die here — no research spend yet.
+This is `evaluate`'s lightweight value, now discover's first gate.
 
-- Delete `commands/evaluate.md`.
-- Remove Part A and its A0–A5 phases from `skills/product-strategy/SKILL.md`
-  (their value now lives in `discover`, §3).
-- Remove `evaluate` from the `scripts/lint.sh` `--complete` manifest, the README
-  command table, and any README/manifest prose that lists it.
-- No deprecation alias (PR #2 is unmerged — `main` never ships `evaluate`).
+### D2 — Demand smoke (cheap real signal; the reality probe, pulled forward)
+Before any heavy analysis, get a market **pulse** with the cheapest possible real
+test: named-list pre-sell DMs (Mom-Test framed) + an optional **no-build fake-door**
+(a form or single static page). Time-boxed (`discover.reality_probe.window_hours`,
+default 24–48). **No landing/Supabase/Stripe stack here** — that is `validate`'s
+executor; D2 stays cheap on purpose. Uses the existing
+`references/reality-probe.md`, repurposed as the front-of-funnel smoke.
 
-## 6. Config
+### Pulse gate (the false-negative guardrail)
+- **Pulse** (≥1 real pre-sell/LOI/deposit, or a fake-door signal above a stated
+  floor) → escalate to D3.
+- **No pulse** → **re-frame the offer/audience ONCE and retest** (a weak first
+  framing must not false-kill a real idea), then **kill/shelve** if still flat.
+  Record the re-frame and the verdict. Cheap kill, before the expensive machinery.
 
-The `product:` block stays (added in PR #2) and is now **shared**: `discover` reads
-`exit_strategy`/`positioning`/`sensitive_category`; `audit` reads all of it incl.
-`surfaces`/`playbook_ref`. No new keys. `modules.product` stays true (it powers
-`audit`). `studio-setup`'s provisioning paragraph (which mentions the product block)
-stays; it already covers capture.
+### D3 — Deep hardening (expensive; only on a pulse)
+Now spend the costly machinery: the multi-agent **red-team** (evidence-bound,
+`references/red-team-personas.md`), the **symmetric calibrated need assessment**
+(`references/demand-intensity-rubric.md`), **monetization/WTP**, **named wedge**
+(recorded to `product.positioning`), and the **exit-safe framing check**
+(names/claims/trademark vs. the exit).
 
-## 7. Handoff contracts (the seams)
+### D4 — Hardened Hypothesis Brief → Gate D
+Write the brief from `templates/discover/hypothesis-brief.md`, now including: stated
+exit, named wedge, exit-safe framing check, the D2 pulse evidence, and a light
+**intended-surfaces sketch** so `/audit` has something to map plays onto. **Gate D**
+pass criteria unchanged (evidence-gated).
 
-- `discover` → `validate`: the Hardened Hypothesis Brief (now exit/wedge/framing/
-  surfaces-aware). Unchanged path; richer content.
-- `validate` → `audit`: on Gate V pass, the validated concept + the brief's
-  surfaces sketch are `audit`'s input. (When `validate` is built in Plan 2, its
-  Validation Report references the brief; `audit` reads both.)
-- `audit` → `ship`: the ranked play build list; each item → `/builderkit:ship`.
-- For an **already-built** product, `audit` can still run standalone against live
-  surfaces (no discover/validate required) — preserved.
+`discover` reads the shared `product:` config block (`exit_strategy`, `positioning`,
+`sensitive_category`).
 
-## 8. Files touched
+## 5. `evaluate` — folded in, removed as a command
+
+- Delete `commands/evaluate.md`. Its triage value is now **D1**; its MVP-spec role is
+  superseded by audit's build list (§6). No deprecation alias (PR #2 unmerged).
+- Remove Part A from `skills/product-strategy/SKILL.md` and `evaluate` from the lint
+  manifest, README command table, and manifest prose.
+
+## 6. `audit` — retargeted and moved **before** `validate`
+
+- **Single-purpose** build planner (drop Part A). Input = the discover Hardened
+  Hypothesis Brief (its surfaces sketch) for a pulse-confirmed, hardened concept —
+  **or** an existing product's surfaces.
+- Runs **after Gate D, before the validation sprint.** Output: the **conversion-asset
+  spec** + the **distribution/sharing plays** (P0 for cold traffic) + the **ranked
+  build list**. These **feed `validate`'s GTM and landing asset**, so the real sprint
+  tests an audited asset.
+- `play-engine.md` (pattern library, strategy/metric tables, pairing graph, flagging
+  rules, Insight Loop) **unchanged**. Standalone audit of a live product preserved.
+
+## 7. `validate` — the real cold-pay-proof sprint (Plan 2, later slot)
+
+Unchanged role and Gate V criteria (≥10 cold users, ≥1 hard pay-proof, recomputed
+from frozen predicates). Now **consumes audit's conversion asset + GTM plan** as its
+starting point instead of building blind. Implemented in Plan 2.
+
+## 8. Closing stage — Insight Loop + studio (the loop)
+
+After `ship`, the **Insight Loop** (audit's metric-first mode: pick one metric →
+ship one play → re-measure, never batch) and the **studio playbook** are the explicit
+terminal stage. Outcomes (including kills at every tier) write back to
+`.builderkit/studio/` as cross-product priors so the next idea starts smarter. The
+funnel is a loop, not a line.
+
+## 9. Config
+
+The `product:` block (from PR #2) stays and is now **shared**: discover reads
+`exit_strategy`/`positioning`/`sensitive_category`; audit reads all incl.
+`surfaces`/`playbook_ref`. **No new keys.** discover's existing `reality_probe`
+config now governs the D2 smoke (same keys). `modules.product` stays true.
+
+## 10. Handoff contracts (the seams)
+
+- D2 smoke → pulse gate: pre-sell/fake-door signal vs. a stated floor; re-frame once
+  before kill.
+- discover → audit: the Hardened Hypothesis Brief (exit/wedge/framing/surfaces-aware).
+- audit → validate: the conversion-asset spec + distribution plays + build list
+  become validate's GTM + landing starting point (Plan 2 wires this).
+- validate → ship: on Gate V pass, the ranked build list items each → `/builderkit:ship`.
+- ship → Insight Loop/studio: post-launch metric loop + cross-product writeback.
+- Standalone: audit can still run against an already-built product without discover.
+
+## 11. Files touched
 
 **Edit**
-- `skills/discover/SKILL.md` — D0 exit; D4 brief gains wedge + exit-safe framing +
-  surfaces sketch; read the `product:` block; note downstream `audit`.
-- `templates/discover/hypothesis-brief.md` — add `exit`, `wedge`, `exit-safe
-  framing check`, `intended surfaces` fields.
-- `skills/product-strategy/SKILL.md` — drop Part A; retarget Part B input; update
-  the description frontmatter (no longer "evaluate").
-- `commands/audit.md` — input wording (discover brief / validated concept / existing
-  product).
-- `README.md` — single chain (discover → validate → audit → ship); drop the
-  `evaluate` row + the separate "evaluate" framing; keep one coherent narrative.
-- `templates/config.template.yaml` — comment tweaks only (the `product:` block now
-  serves discover too); no key changes.
+- `skills/discover/SKILL.md` — **re-order into tiers** (D0 frame → D1 triage →
+  D2 demand smoke + pulse gate w/ re-frame-once guardrail → D3 deep hardening →
+  D4 brief → Gate D); read `product:` block; note downstream audit.
+- `skills/discover/references/reality-probe.md` — repurpose as the **D2 front-of-funnel
+  smoke** + the re-frame-once-before-kill guardrail (was a late D3.5 probe).
+- `templates/discover/hypothesis-brief.md` — add exit, wedge, exit-safe framing check,
+  D2 pulse evidence, intended-surfaces fields.
+- `skills/product-strategy/SKILL.md` — drop Part A; retarget Part B input; state it
+  runs **before** validate and feeds its GTM; description frontmatter (no "evaluate").
+- `commands/audit.md` — input wording + "feeds the validation sprint".
+- `README.md` — the looped, tiered chain; drop `evaluate`; one coherent narrative +
+  the closing loop.
+- `templates/config.template.yaml` — comments only (product block now serves discover;
+  reality_probe governs the smoke). No key changes.
 - `scripts/lint.sh` — drop `commands/evaluate.md` from the `--complete` manifest.
-- `.claude-plugin/plugin.json`, `marketplace.json` — descriptions reflect the single
-  chain (drop "evaluate" as a separate front-end; keep audit + discover/validate).
+- `.claude-plugin/plugin.json`, `marketplace.json` — descriptions reflect the
+  tiered/looped chain; drop "evaluate" as a separate front-end.
 
 **Delete**
 - `commands/evaluate.md`
 
 **Unchanged**
 - `skills/product-strategy/reference/play-engine.md`
-- `skills/discover/references/*` (red-team, demand rubric, reality probe)
+- `skills/discover/references/{red-team-personas,demand-intensity-rubric}.md`
 - `templates/studio/*`, `.gitignore`
 
-## 9. Where it lands (git)
+## 12. Where it lands (git)
 
-Do the work **on the existing `feat/product-strategy` branch** and **update PR #2**.
-Net: PR #2 changes from "add product-strategy (evaluate + audit)" to "add audit +
-reconcile the front-ends (fold evaluate into discover)." `main` never sees a
-redundant `evaluate`. PR #1 (discover) is already merged; the discover edits in §8
-ride in PR #2 on top of merged main.
+Work on the existing **`feat/product-strategy` branch**; **update PR #2** from "add
+product-strategy (evaluate + audit)" to "add audit + reconcile front-ends into a
+demand-first tiered funnel." discover's re-tiering rides in PR #2 on top of merged
+main. PR #1 already merged.
 
-## 10. Verification
+## 13. Verification
 
-- `scripts/lint.sh --complete` → `lint OK` (manifest no longer lists evaluate;
-  lists audit + product-strategy).
+- `scripts/lint.sh --complete` → `lint OK` (manifest: no `evaluate`; has audit +
+  product-strategy + discover files).
 - `grep -rn '{{' skills/ commands/` → empty.
 - IP scan clean (no `bartek`/`marzec`/handle/deck-title).
-- No `evaluate` references remain in skills/commands/README/manifests/lint.
-- `discover` SKILL + brief template cross-references still resolve.
-- Cross-check: the four absorbed bits (§3) each appear in both the discover SKILL and
-  the brief template.
+- No `evaluate` references remain anywhere (skills/commands/README/manifests/lint).
+- discover SKILL phase order is D0→D1→D2→(pulse)→D3→D4→Gate D, with the reality probe
+  as D2 (before the red-team), and the re-frame-once guardrail present.
+- discover SKILL + brief cross-references resolve; the absorbed bits (exit, wedge,
+  framing, surfaces) appear in both the SKILL and the brief template.
+- audit SKILL/command state they precede validate and feed its GTM.
 
-## 11. Out of scope / follow-ups
+## 14. Out of scope / follow-ups
 
-- Building `validate` (Plan 2) — its Validation Report → audit handoff is specified
-  here but implemented later.
+- Building `validate` (Plan 2) — its consumption of audit's asset/GTM is specified
+  here, implemented later.
 - Medium-tier discover/validate review findings (other spec §10) — unchanged.
+- A standalone `/builderkit:smoke` or `/builderkit:triage` command — deliberately not
+  added; both are discover tiers. Revisit only if users want to run them in isolation.
