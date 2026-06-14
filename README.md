@@ -52,7 +52,10 @@ possible:
   plays to surfaces → tier P0/P1/P2 → flag plays the brand should decline → ranked
   build list. Runs **before** the validation sprint and feeds its conversion asset + GTM.
 - **validate** (`/builderkit:validate`) — a 48-hour guerrilla sprint that gates on real
-  cold-stranger willingness to pay before `/builderkit:ship` builds it.
+  cold-stranger willingness to pay. The kit briefs the conversion page + ships the
+  measurement plumbing and the deterministic Gate V evaluator; **you build and design the
+  actual page** (conversion is human-owned craft). The verdict is recomputed from the raw
+  rows, so the builder is never the sole scorer.
 - **Insight Loop** — after ship, improve one metric with one play at a time; a
   cross-product studio playbook (`.builderkit/studio/`) accumulates priors so each new
   product starts smarter.
@@ -63,6 +66,7 @@ possible:
 | --- | --- |
 | `/builderkit:setup` | Phased onboarding: detect stack, write `.builderkit/config.yaml`, walk the 4 e2e testing phases. |
 | `/builderkit:audit [scope]` | Play Audit: weight strategies → map plays to surfaces → tier P0/P1/P2 → flag brand/exit conflicts → ranked build list (feeds the validate sprint). `metric:<name>` runs the Insight Loop. |
+| `/builderkit:validate [brief\|poll\|report]` | 48h validation sprint: freeze Gate V → guerrilla GTM → conversion brief (you build the page) → launch → recompute the verdict from raw rows. Gate V = ≥10 cold users + ≥1 cold pay-proof. |
 | `/builderkit:discover <seed>` | Demand-first funnel: triage → demand smoke (pulse) → deep red-team hardening → Hypothesis Brief (Gate D). Feeds `/builderkit:audit`. |
 | `/builderkit:ship <request>` | 8-phase delivery pipeline (intake → recon → analysis → requirements → QA plan → implementation → verification → ship) with Linear journaling. |
 | `/builderkit:linear-issue <id>` | Take one Linear issue end-to-end: read → implement → verify → deploy → close with proof. |

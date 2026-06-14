@@ -53,6 +53,9 @@ if [ "${1:-}" = "--complete" ]; then
     templates/landing/wiring-reference.html templates/landing/payment-intent.mjs \
     templates/landing/privacy.md templates/landing/README.md \
     scripts/test.sh \
+    commands/validate.md skills/validate/SKILL.md \
+    skills/validate/references/landing-conversion.md skills/validate/references/honesty-floor.md skills/validate/references/guerrilla-playbook.md \
+    templates/validate/validation-report.md \
     templates/maestro/boot.yaml templates/maestro/smoke.yaml templates/maestro/ci-workflow.yml \
     templates/playwright/auth.setup.ts templates/playwright/evidence.ts templates/playwright/smoke.spec.ts templates/playwright/ci-workflow.yml templates/playwright/playwright.config.template.ts; do
     [ -f "$f" ] || err "missing required file: $f"
