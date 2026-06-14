@@ -42,7 +42,7 @@ docs:
   specs_dir: {{SPECS_DIR}}    # spec docs home, e.g. docs/specs/
   design_dirs: []             # optional: where design references live
 
-product:                      # read by the product-strategy module (evaluate + play audit)
+product:                      # read by discover (exit/positioning/sensitive) + the play audit
   positioning: {{POSITIONING}}        # one-line wedge / brand stance (or "")
   exit_strategy: {{EXIT_STRATEGY}}    # stated exit, keeps framing/claims safe (or "none")
   sensitive_category: {{SENSITIVE}}   # true → Play Audit flags manipulative plays harder (health, finance, self-image, minors)
@@ -55,7 +55,7 @@ modules:
   linear: true
   discover: true
   validate: true
-  product: true               # evaluate (ThinkTank) + play audit + insight loop
+  product: true               # play audit + insight loop
 
 # ── discover module (idea → hardened hypothesis) ──
 discover:
