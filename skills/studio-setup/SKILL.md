@@ -47,8 +47,7 @@ sections and `modules.discover/validate/product` (written in Step 2). Additional
   confirmation: `positioning` (one-line wedge), `exit_strategy` (or "none"),
   `sensitive_category` (true/false), and optional `playbook_ref` (path to the user's
   licensed play-deck reference, kept outside the plugin). These can be left blank —
-  the `product-strategy` skill self-provisions them on first `/builderkit:evaluate`
-  or `/builderkit:audit` run.
+  the `product-strategy` skill self-provisions them on first `/builderkit:audit` run.
 
 ## Step 3 — Walk the four phases
 
