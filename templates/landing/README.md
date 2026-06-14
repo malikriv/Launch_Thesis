@@ -16,7 +16,7 @@ connectors, deploy.
 - `privacy.md` — fill-in privacy/consent.
 
 ## Wiring (from config)
-- `validate.deploy.*` → where `index.html` is hosted (e.g. Vercel static).
+- `validate.deploy.*` → where your built page is hosted (e.g. Vercel static).
 - `validate.data.*` → `STORE_ENDPOINT` in `capture.js` + apply `schema.sql`.
 - `validate.payments.*` → `STRIPE_PUBLISHABLE_KEY` + the `/api/preauth` route.
 
