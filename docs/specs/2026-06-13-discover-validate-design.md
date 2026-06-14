@@ -196,7 +196,7 @@ Command: `/builderkit:validate [hypothesis-brief-path]`. Skill:
 |----|------|-------------------|
 | V0 | Instrument + freeze the gate | Classify archetype → set window. **Write the machine-checkable Gate V predicates into the brief and HASH them before any build** (§4.1). Create the durable sprint-state file (§4.5). |
 | V1 | Fastest-path GTM (guerrilla, ≤ budget) | Channel-**standing** assessment + a required **named-prospect list** + per-channel tracked links. See §4.2. |
-| V2 | Build the conversion asset (executor; idempotent; C2 degrade) | One optimized landing page + waitlist/activation capture + tiered analytics + a **two-signal WTP probe** (hard money vs. soft intent-click) + honesty/disclosure floor. **Idempotent get-or-create** (§4.5). Conversion + integrity guidance in `references/landing-conversion.md`. |
+| V2 | Conversion brief (kit) → human builds the page | Kit produces the conversion **strategy + copy + wireframe + rubric** (`references/landing-conversion.md`) and ships the **measurement plumbing** — cookieless idempotent capture + tiered analytics + the **two-signal WTP probe** (hard preauth vs. soft intent-click). **The human builds/designs the actual page** in their own tool and wires it to the plumbing. The kit ships **no auto-page**. Pre-launch, the kit verifies the page clears the rubric (human sign-off) and the capture events actually fire (§4.3). |
 | V3 | Launch the sprint (human posts; cold-tagged ingestion) | Founder posts from own accounts; kit ingests events **tagged by source cohort and with founder/agent signal dropped at ingestion** (§4.4). Pull-based polling (§4.5). |
 | V4 | Validation Report + delivery commitment | Handoff artifact with raw counted rows and the binding delivery block (§4.6). |
 
@@ -233,9 +233,18 @@ reproducible and not the builder's say-so.
   every post/DM**. Scripts (1:1 cold-DM/email, value-first "borrow distribution"
   ask) in `references/guerrilla-playbook.md`.
 
-### 4.3 V2 — the conversion asset and the WTP probe
+### 4.3 V2 — conversion brief, the measurement plumbing, and the human-built page
 
-- One landing page: ICP headline → problem agitate → value prop → **single CTA**.
+- **The kit ships NO auto-generated page.** Conversion is human-owned craft — an
+  auto-page would under-convert and *confound the gate* (a FAIL would be ambiguous
+  between "no demand" and "bad page"). The kit produces a **conversion brief**:
+  strategy, copy (headline options, problem-agitate-solve, single CTA, objection
+  handling), a **wireframe/layout spec**, and a concrete **conversion rubric**
+  (`references/landing-conversion.md`). The **human builds and designs the actual
+  page** in their own tool (the page targets ICP headline → problem agitate → value
+  prop → single CTA), then wires it to the kit's capture + WTP probe.
+- **Kit-shipped plumbing** (the measurement stack the human's page imports):
+  cookieless idempotent capture, tiered analytics, and the two-signal WTP probe.
 - **Two distinct signals, never conflated:** a **HARD money commitment** vs. a
   **SOFT intent-click**. A bare price-button click is *soft only* — tracked for
   funnel diagnosis, weight `0`, and it can never satisfy `require_pay_proof` or
@@ -256,8 +265,13 @@ reproducible and not the builder's say-so.
   payment/PII capture goes live: (1) fabricated social proof/metrics/press, (2)
   claiming a non-existent product is live, (3) taking real money with no disclosed
   refund/cancellation path, (4) collecting PII with no visible notice, (5) storing
-  raw PII in `studio/`. Enforced as a **single pre-launch orchestrator verify** (a
-  normal verify-fail regenerates copy — no new loop).
+  raw PII in `studio/`.
+- **Pre-launch gate (the sprint does not count until this passes):** a single
+  orchestrator verify that the human-built page (a) clears the **conversion rubric**
+  with explicit **human sign-off**, (b) clears the five honesty HARD STOPS above, and
+  (c) **actually fires the capture events** (a test land/signup/probe is recorded). A
+  verify-fail sends the page back for edits — no new loop. The kit never auto-launches
+  a page it generated; conversion craft and the launch decision are the human's.
 - **PII:** `templates/landing/` ships a default consent line + a `privacy.md`
   fill-in stub auto-populated from config; analytics default to first-party,
   cookieless, no-identifier event capture (measures the gate without tripping
