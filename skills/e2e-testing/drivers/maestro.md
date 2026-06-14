@@ -57,6 +57,14 @@ the client manually after native changes).
   (shared simulator, queued).
 - **Guards**: fails fast if port 8081 is owned by an interactive Metro, or if
   `testing.app_id` is not installed on the sim.
+  - **Same-Mac footgun**: when the runner *is* your dev Mac, an interactive
+    Metro (`npm run start:*`, a local sim-verify, the app's dev server) holding
+    `:8081` trips this guard, so the PR's `e2e` check fails fast (~20s, before
+    any flow runs) — a false red that looks like a test failure. Before pushing
+    a commit that triggers the e2e run (any change under `testing.ci.app_paths`),
+    stop local Metro and confirm `lsof -ti :8081` is empty. If a run already
+    failed this way, free the port and `gh run rerun <run-id> --failed` — the
+    guard step is the tell (`Port 8081 busy …` in the log), not a flow assertion.
 - **Secrets**: `E2E_DEV_LOGIN_EMAIL` / `E2E_DEV_LOGIN_PASSWORD` — CI writes them into `testing.dev_login.env_file` as the `EXPO_PUBLIC_DEV_LOGIN_*` vars at build time.
 - **Artifacts**: `testing.evidence_dir` evidence PNGs + Maestro debug output
   upload as the evidence artifact (14-day retention).

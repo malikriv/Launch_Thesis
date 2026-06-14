@@ -24,6 +24,18 @@ sentences, but they still happen and still get written down.
 and point the user at `/builderkit:setup`. The project's `CLAUDE.md` overrides
 both this skill and the config where they conflict.
 
+**Runnable tree (preflight).** Phase 1 recon and Phase 7 gates BOOT the app, so
+confirm the working tree can actually run before trusting them. Fresh
+`git worktree` checkouts are the common trap: `node_modules` and gitignored env
+files (`testing.dev_login.env_file`, `.env*`) are NOT carried into a new
+worktree, so a clean tree fails recon/boot/tests for environmental reasons that
+masquerade as "the change is broken." Preflight: if `node_modules` is absent
+under `commands.workdir` (or the workspace root), run the install; if the
+gitignored env files are absent, copy them from the primary checkout (never
+commit them) or stop and ask the user. Do this BEFORE Phase 1 — a recon agent
+booting a depless/env-less tree wastes a fan-out and produces misleading
+findings.
+
 ## Operating rules (apply to every phase)
 
 - **Repo law first.** The project's `CLAUDE.md` rules override this skill where
