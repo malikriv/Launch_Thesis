@@ -20,6 +20,15 @@ Read package.json(s), lockfiles, repo layout:
 - Monorepo with both (e.g. an Expo app plus a vite/next site): detect at the chosen `commands.workdir`; if that package has both, expo/RN wins (it's the shippable app). Surface the ambiguity in the Step 2 confirmation.
 - Linear MCP reachability (`list_teams`); note the team key for this product.
 
+**Greenfield (idea-stage) branch.** Empty stack/driver/dev is EXPECTED, not a detection
+failure — the founder may have only an idea. When detection finds no buildable app, take
+the greenfield path: in Step 2 write ONLY the app-free sections (`project.name`, `docs`,
+`product`, `discover`, `validate`, `studio`, `modules`) with `modules.testing: false`
+and leave `testing.*` blank; in Step 3 SKIP the four-phase e2e walk and tell the founder
+"setup is done — run `/builderkit:discover <seed>` next." Do not flag blank `testing.*`
+as drift while `modules.testing` is false; the testing phases come online later, after
+`/builderkit:ship` produces an app.
+
 ## Step 2 — Configure
 
 Fill `${CLAUDE_PLUGIN_ROOT}/templates/config.template.yaml` from detection,
