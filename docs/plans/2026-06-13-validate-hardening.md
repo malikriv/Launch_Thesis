@@ -2,6 +2,12 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Rev 2 — reconciled with PR #5 ("Tier 1: plan-fidelity delivery").** PR #5 did not fix
+> B1–B6 (they stand) but rewrote some edited files; the high-overlap regions (landing
+> files, validate V0–V3/Gate-V, the funnel table) are intact so edits still anchor. This
+> rev adds **Task 8 (B7: a `scope-run.mjs` driver)** so PR #5's scope guard is executed
+> not eyeballed, and re-anchors `scripts/test.sh` (it now runs landing **+** delivery).
+
 **Goal:** Clear the 6 first-run blockers + 3 winnability fixes from the pre-deployment review so a real first `validate` run is runnable and winnable — the gate scores correctly from a real export, the founder has an honest path to the one required signal, and setup routes an idea-stage founder to `/discover`.
 
 **Architecture:** `gate-eval.mjs` gets crash-guards + timestamp normalization (TDD). A new `gate-run.mjs` is the canonical zero-dep driver (`buildPredicates` + `deriveLands` are pure + TDD'd; the CLU wrapper reads JSON). `payment-intent.mjs`/`capture.js` get honesty + visibility fixes (syntax-checked scaffolds). Reference server routes ship under `templates/landing/server/`. The validate skill, setup, references, report, and README get the matching docs/flow fixes.
@@ -10,7 +16,7 @@
 
 **Spec:** `docs/specs/2026-06-13-validate-hardening-design.md`.
 
-**Branch precondition:** on `feat/validate-hardening` (off `main`). Confirm `git rev-parse --abbrev-ref HEAD` and `node --test templates/landing/*.test.mjs` → `# pass 12`.
+**Branch precondition:** on `feat/validate-hardening`, **rebased onto post-#5 `main`**. Confirm `git rev-parse --abbrev-ref HEAD` is `feat/validate-hardening`, `node --test templates/landing/*.test.mjs` → `# pass 12` (landing only), and `scripts/test.sh` is green at baseline (`# pass 27`, landing + delivery).
 
 **Conventions:** TDD for Tasks 1–2; `scripts/lint.sh`/`--complete` → `lint OK`; `node --test templates/landing/*.test.mjs` stays green; no `{{` under `skills/`/`commands/`; commits end with `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
 
@@ -695,8 +701,9 @@ In `scripts/lint.sh` `--complete` list, add after the
     templates/landing/gate-run.mjs templates/landing/gate-run.test.mjs \
     templates/landing/server/capture.route.mjs templates/landing/server/preauth.route.mjs \
 ```
-In `scripts/test.sh`, after the `node --test templates/landing/*.test.mjs` line, add a
-CLI smoke:
+In `scripts/test.sh`, append (on a new line after the existing test line — which on
+post-#5 main is `node --test templates/landing/*.test.mjs templates/delivery/*.test.mjs`)
+a CLI smoke:
 ```bash
 node templates/landing/gate-run.mjs --export templates/landing/fixtures/rows.example.json \
   --gate templates/landing/fixtures/gate.example.json --price 20 \
@@ -714,7 +721,121 @@ git commit -m "docs(validate): landing README driver/routes; lint manifest + gat
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
-Expected: `# pass 18` then `gate-run smoke OK`; `lint OK`.
+Expected: all suites green (the landing portion is now **18**; the delivery suites from
+PR #5 are unchanged), then `gate-run smoke OK`; `lint OK`. (`node --test
+templates/landing/*.test.mjs` alone is 18; `scripts/test.sh` runs landing + delivery.)
+
+---
+
+## Task 8: scope-check driver — `scope-run.mjs` (B7, PR #5 reconciliation)
+
+**Files:** Create `templates/delivery/scope-run.mjs`, `templates/delivery/fixtures/{plan.example.json,contract.example.json}`; modify `skills/ship-feature/SKILL.md`, `scripts/lint.sh`, `scripts/test.sh`
+
+PR #5's `scope-check.mjs` is pure + unit-tested but has no driver — ship "uses the rules"
+by eye, re-opening the builder-is-the-judge hole. Give it the same CLI treatment
+`gate-run.mjs` gave the gate. (Do NOT modify `scope-check.mjs` — it's tested; only wrap it.)
+
+- [ ] **Step 1: Read `scope-check.mjs` first**
+
+Read `templates/delivery/scope-check.mjs` fully so the fixture (Step 2) is built to a
+guaranteed PASS against the real `evaluateScope` coverage/DRIFT/DEADLINE logic.
+
+- [ ] **Step 2: Write `templates/delivery/scope-run.mjs`**
+
+```js
+#!/usr/bin/env node
+// Canonical scope-guard driver (mirrors gate-run.mjs). Zero-dep: reads JSON (the ship
+// agent extracts build-plan.yaml -> plan.json and sold-scope.yaml -> contract.json
+// first, avoiding a YAML dependency). Calls the pure, unit-tested evaluateScope so the
+// builder is NOT the judge of "did we stay on plan". Exits non-zero on any non-PASS so
+// the ship pipeline halts mechanically.
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { evaluateScope, topoWaves } from "./scope-check.mjs";
+
+function arg(name) { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : undefined; }
+
+function main() {
+  const planPath = arg("--plan"), contractPath = arg("--contract");
+  const slice = (arg("--slice") || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const estDays = arg("--est-days");
+  if (!planPath || !contractPath) {
+    console.error("usage: node scope-run.mjs --plan plan.json --contract contract.json [--slice id,id] [--est-days N]");
+    process.exit(2);
+  }
+  const plan = JSON.parse(readFileSync(planPath, "utf8"));
+  const contract = JSON.parse(readFileSync(contractPath, "utf8"));
+  const out = evaluateScope({ plan, slice, estimated_build_days: estDays != null ? Number(estDays) : null }, contract);
+  const { waves } = topoWaves(plan);
+  console.log(`VERDICT: ${out.verdict}`);
+  if (out.reasons?.length) console.log(`reasons: ${out.reasons.join("; ")}`);
+  if (out.warnings?.length) console.log(`warnings: ${out.warnings.join("; ")}`);
+  console.log(`waves: ${JSON.stringify(waves)}`);
+  if (out.verdict !== "PASS") process.exit(1);
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
+```
+
+- [ ] **Step 3: PASS fixtures (tune to the real evaluateScope from Step 1)**
+
+Create `templates/delivery/fixtures/plan.example.json`:
+```json
+[
+  {"id":"a","tier":"P0","scope_origin":"sold","delivers":["d1"],"depends_on":[],"complexity":3},
+  {"id":"b","tier":"P1","scope_origin":"audit","delivers":[],"depends_on":["a"],"complexity":2}
+]
+```
+Create `templates/delivery/fixtures/contract.example.json`:
+```json
+{ "scope_version": 1, "slug": "demo", "deliverables": [ { "id": "d1", "title": "the sold thing" } ],
+  "price": 20, "paid_cohort_count": 3, "max_days_to_first_access": 30 }
+```
+(Sold item `a` delivers the only sold deliverable `d1`; the slice includes `a`. If Step 1
+shows `evaluateScope` needs more for PASS, adjust the FIXTURE — never `scope-check.mjs`.)
+
+- [ ] **Step 4: Smoke the driver**
+
+```bash
+node --check templates/delivery/scope-run.mjs && echo "scope-run syntax OK"
+node templates/delivery/scope-run.mjs --plan templates/delivery/fixtures/plan.example.json --contract templates/delivery/fixtures/contract.example.json --slice a
+```
+Expected: `scope-run syntax OK`; then `VERDICT: PASS`.
+
+- [ ] **Step 5: Wire it into `ship-feature` SKILL**
+
+In `skills/ship-feature/SKILL.md`, in the "#### Scope guard" subsection (where it reads
+the rules from `scope-check.mjs`), add the concrete driver step:
+```markdown
+   Get the verdict from the driver (don't eyeball it): extract `build-plan.yaml` ->
+   `plan.json` and `sold-scope.yaml` -> `contract.json`, then `node
+   ${CLAUDE_PLUGIN_ROOT}/templates/delivery/scope-run.mjs --plan plan.json --contract
+   contract.json --slice <first-slice ids> [--est-days N]`. Report its verdict verbatim;
+   any non-PASS exits non-zero and HALTS ship — the builder is never the judge of plan
+   fidelity (same C6 principle as Gate V).
+```
+
+- [ ] **Step 6: lint manifest + test smoke + commit**
+
+In `scripts/lint.sh` `--complete` list, add after the
+`templates/delivery/scope-check.integration.test.mjs \` line:
+```
+    templates/delivery/scope-run.mjs \
+```
+In `scripts/test.sh`, append (after the gate-run smoke) a scope-run smoke:
+```bash
+node templates/delivery/scope-run.mjs --plan templates/delivery/fixtures/plan.example.json \
+  --contract templates/delivery/fixtures/contract.example.json --slice a | grep -q "VERDICT: PASS" \
+  && echo "scope-run smoke OK" || { echo "scope-run smoke FAIL"; exit 1; }
+```
+Commit:
+```bash
+git add templates/delivery/scope-run.mjs templates/delivery/fixtures/ skills/ship-feature/SKILL.md scripts/lint.sh scripts/test.sh
+git commit -m "feat(delivery): scope-run.mjs driver so ship runs the scope guard, not eyeballs it (B7)
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
+```
+Expected: `scope-run smoke OK`; `lint OK`.
 
 ---
 
@@ -723,9 +844,9 @@ Expected: `# pass 18` then `gate-run smoke OK`; `lint OK`.
 - [ ] **Step 1: Gates**
 
 ```bash
-scripts/test.sh                          # # pass 18 # fail 0, then gate-run smoke OK
+scripts/test.sh                          # all suites green (landing 18 + delivery) + gate-run + scope-run smokes OK
 scripts/lint.sh --complete               # lint OK
-for f in templates/landing/capture.js templates/landing/payment-intent.mjs templates/landing/gate-run.mjs templates/landing/server/capture.route.mjs templates/landing/server/preauth.route.mjs; do node --check "$f" && echo "ok $f"; done
+for f in templates/landing/capture.js templates/landing/payment-intent.mjs templates/landing/gate-run.mjs templates/landing/server/capture.route.mjs templates/landing/server/preauth.route.mjs templates/delivery/scope-run.mjs; do node --check "$f" && echo "ok $f"; done
 grep -rn '{{' skills/ commands/ || echo "no-braces"
 grep -rinE 'bartek|marzec|@bartek|product design playbook' skills/ commands/ templates/ README.md .claude-plugin/ || echo "ip-clean"
 ```
@@ -737,13 +858,15 @@ predicates object and `gate-eval` no longer reads `p.rate.*`/`p.pay_proof.*` wit
 `?.`; (B2) `payment-intent.mjs` sets `live:true` ONLY inside the `requires_capture/
 succeeded` branch; (B3) `capture.js` only silently no-ops when `STORE_ENDPOINT===''`;
 (B4) the V0 payment hard-stop + the report's live/amount columns are present; (B6) the
-greenfield branch sets `modules.testing:false` and routes to `/discover`.
+greenfield branch sets `modules.testing:false` and routes to `/discover`; (B7)
+`scope-run.mjs` exits non-zero on a non-PASS and the ship scope-guard step runs it
+(doesn't eyeball).
 
 - [ ] **Step 3: Push + PR (base main)**
 
 ```bash
 git push -u origin feat/validate-hardening
-gh pr create --base main --head feat/validate-hardening --title "fix: validate hardening — clear the 6 pre-deployment blockers + winnability" --body "<summarize the 6 blockers + W1-W3 fixed; test plan: node --test # pass 18 + gate-run smoke + lint OK; ends with the Claude Code footer>"
+gh pr create --base main --head feat/validate-hardening --title "fix: validate hardening — clear the 6 pre-deployment blockers + winnability + scope-run driver (B7)" --body "<summarize the 6 blockers + W1-W3 + B7 scope-run driver; test plan: landing suite 18 + gate-run + scope-run smokes + lint OK; ends with the Claude Code footer>"
 ```
 
 - [ ] **Step 4: Dry-read pass**

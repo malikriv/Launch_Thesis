@@ -177,6 +177,39 @@ guerrilla-playbook}.md` (B2 recipe, W1 reframe); `templates/validate/validation-
   throws; planner-mode has a documented gate-eligible path; greenfield setup writes an
   app-free config and routes to `/discover`.
 
+## B7 — scope-check driver (PR #5 reconciliation; medium)
+
+PR #5 added the delivery module's **`scope-check.mjs`** — a pure scope guard (`topoWaves`
++ `evaluateScope`) consumed by `/builderkit:ship`. It has the **same gap `gate-eval` had
+before B5**: no driver. `ship-feature` SKILL says to "use the rules in `scope-check.mjs`"
+and the YAML contracts (`build-plan.yaml`, `sold-scope.yaml`) must be parsed to JSON to
+call it — but there's no CLI, so the builder is back to eyeballing "did we stay on plan,"
+re-opening the hole the module exists to close. Lower urgency than B1–B6 (ship-phase,
+after a validate PASS — not the first idea→validate run) but the same integrity principle.
+
+- **Fix (driver, mirrors `gate-run.mjs`):** ship `templates/delivery/scope-run.mjs` — a
+  zero-dep CLI: `--plan plan.json --contract contract.json [--slice id,id] [--est-days N]`
+  (the ship agent extracts the YAML contracts to JSON first, exactly as the validate agent
+  does for the gate), call `evaluateScope`, print the verdict + the `topoWaves` layers +
+  reasons/warnings, exit non-zero on any non-PASS so the pipeline halts mechanically. The
+  pure `evaluateScope`/`topoWaves` are already unit-tested by `scope-check.test.mjs`;
+  `scope-run.mjs` is a thin CLI verified by `node --check` + a fixture smoke.
+- **Fix (docs):** `ship-feature` SKILL's scope-guard step documents `node scope-run.mjs
+  --plan … --contract …` as THE way to get the verdict (extract the two YAMLs to JSON
+  first), report it verbatim, halt on non-PASS.
+- Add `scope-run.mjs` + fixtures to `scripts/lint.sh`'s manifest.
+
+## Reconciliation with PR #5 (rev note)
+
+PR #5 ("Tier 1: plan-fidelity delivery") merged after this spec was first written. It did
+**not** fix B1–B6 (left `gate-eval`/`gate-run`/`capture`/`payment-intent`/greenfield setup
+untouched), so all six blockers stand. It **did** rewrite some edited files but left the
+high-overlap regions intact (landing files, validate V0–V3/Gate-V, the funnel table), so
+the edits still anchor. Reconciliation: re-anchor `scripts/test.sh` (now runs landing **+**
+delivery; landing-only glob `node --test templates/landing/*.test.mjs` is still 12 at
+baseline); coexist with PR #5's V4 `sold-scope.yaml` emission + `learnings.md`
+provisioning (different sub-sections, no conflict); add B7. Branch rebased onto post-#5 `main`.
+
 ## Out of scope (stay parked)
 - `feat/validate-enhancements`: EXTEND verdict, standing ledger, founder-hour budget.
 - spec §10: #13 fake-door detail, #18 multi-seed triage, #20 provenance/portfolio cadence.
