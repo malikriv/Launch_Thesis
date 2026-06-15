@@ -55,6 +55,8 @@ if [ "${1:-}" = "--complete" ]; then
     templates/landing/gate-eval.mjs templates/landing/gate-eval.test.mjs \
     templates/landing/schema.sql templates/landing/capture.js \
     templates/landing/wiring-reference.html templates/landing/payment-intent.mjs \
+    templates/landing/gate-run.mjs templates/landing/gate-run.test.mjs \
+    templates/landing/server/capture.route.mjs templates/landing/server/preauth.route.mjs \
     templates/landing/privacy.md templates/landing/README.md \
     scripts/test.sh \
     commands/validate.md skills/validate/SKILL.md \
