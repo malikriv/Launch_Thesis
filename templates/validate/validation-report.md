@@ -14,7 +14,7 @@
 | lands | | | | |
 | signups | | | | |
 | activations | | | | |
-| pay-proof (live=true, amount>0) | | | | |
+| pay-proof (live=true, amount ≥ min_amount) | | | | |
 
 > A pay-proof row counts ONLY with `live: true` and `amount` ≥ the gate's `min_amount`
 > (= `min_pct_of_price%` × the D2 price). An `amount: 0` or `live: false` pay-proof does
