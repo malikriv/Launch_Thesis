@@ -49,6 +49,7 @@ if [ "${1:-}" = "--complete" ]; then
     templates/audit/build-plan.template.yaml \
     templates/delivery/sold-scope.template.yaml \
     templates/delivery/scope-check.mjs templates/delivery/scope-check.test.mjs \
+    templates/delivery/scope-check.integration.test.mjs \
     commands/audit.md \
     skills/product-strategy/SKILL.md skills/product-strategy/reference/play-engine.md \
     templates/landing/gate-eval.mjs templates/landing/gate-eval.test.mjs \
