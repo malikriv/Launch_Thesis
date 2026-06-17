@@ -11,6 +11,8 @@ studio playbook that compounds across every idea you put through it. It stops at
 PASS boundary and hands off a validated thesis — it does **not** own your build,
 your tests, or your tickets.
 
+> **Why this exists:** read [the LaunchThesis manifesto](MANIFESTO.md).
+
 ## Who it's for
 
 Burned indie builders — vibe coders who ship fast with AI builders (Claude Code,
