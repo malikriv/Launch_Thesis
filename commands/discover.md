@@ -1,9 +1,11 @@
 ---
-description: Take a seed (problem, idea, or population) to a red-team-hardened, reality-probed hypothesis brief
+description: Take a seed (problem, idea, or population) to a red-team-hardened Launch Thesis brief with a named, versioned wedge
 argument-hint: <a problem, an idea, or a population to serve>
 ---
-Invoke the builderkit `discover` skill with the seed: $ARGUMENTS. Read
-.builderkit/config.yaml first; if missing, run /builderkit:setup before the
+Invoke the launchthesis `discover` skill with the seed: $ARGUMENTS. Read
+.launchthesis/config.yaml first; if missing, run /launchthesis:setup before the
 pipeline. The funnel runs cheap-to-expensive (triage → demand smoke → deep
-hardening) and ends by writing a Hardened Hypothesis Brief that /builderkit:audit
-consumes (build plan), then /builderkit:validate (real cold-pay-proof sprint).
+hardening): triage emits a candidate wedge, hardening promotes it to a named,
+versioned wedge. It ends by writing a Launch Thesis brief — the source of truth
+for the wedge — that /launchthesis:strategy consumes (GTM + conversion plays),
+then /launchthesis:validate (real cold-pay-proof sprint).

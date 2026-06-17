@@ -1,63 +1,31 @@
-# BuilderKit per-project config — written by /builderkit:setup, read by every
-# builderkit skill at start. Repo CLAUDE.md overrides this file where they conflict.
+# LaunchThesis per-project config — written by /launchthesis:setup, read by every
+# launchthesis skill at start. Repo CLAUDE.md overrides this file where they conflict.
 config_version: 1
 
 project:
   name: {{PROJECT_NAME}}
-  stack: {{STACK}}            # expo | web-pwa | web
-
-commands:
-  workdir: {{WORKDIR}}        # dir all commands run from ("." or e.g. apps/mobile)
-  typecheck: {{TYPECHECK}}    # e.g. npx tsc --noEmit
-  unit: {{UNIT}}              # e.g. npx jest | npx vitest run
-  e2e: {{E2E}}                # e.g. npm run e2e | npx playwright test
-  e2e_smoke: {{E2E_SMOKE}}    # fast pack, e.g. npm run e2e:smoke | npx playwright test --grep @smoke
-  dev: {{DEV}}                # dev server w/ test auth, e.g. npm run start:devlogin | npm run dev
-  dev_port: {{DEV_PORT}}    # port commands.dev serves on (web: used by the Playwright webServer block)
-
-testing:
-  driver: {{DRIVER}}          # maestro | playwright
-  app_id: {{APP_ID}}          # maestro only: iOS bundle id
-  boot_sentinel_testid: {{BOOT_SENTINEL_TESTID}}  # testID/data-testid that only renders signed-in — flows + auth setup assert it
-  flows_dir: {{FLOWS_DIR}}    # e.g. apps/mobile/.maestro/ | e2e/
-  evidence_dir: {{EVIDENCE_DIR}}  # screenshot evidence output (gitignored)
-  phases_complete: []         # setup resume state, subset of [1,2,3,4]
-  dev_login:
-    mode: {{DEV_LOGIN_MODE}}  # env-creds (native dev client) | storage-state (web)
-    env_file: {{ENV_FILE}}    # env-creds: gitignored file holding test creds
-  seed:
-    account: {{SEED_ACCOUNT}} # seeded test account identity (or "local-fixture")
-    seed_file: {{SEED_FILE}}  # SQL/script/fixture that resets the test state
-  ci:
-    workflow: {{CI_WORKFLOW}}        # path, e.g. .github/workflows/e2e.yml
-    workflow_name: {{CI_NAME}}       # display name for `gh workflow run`
-    runner: {{CI_RUNNER}}            # ubuntu-latest | [self-hosted, macOS, maestro]
-    app_paths: {{APP_PATHS}}      # YAML list of app-code globs that trigger PR e2e runs
-
-linear:
-  team: {{LINEAR_TEAM}}       # team key, e.g. ACME
-  url: {{LINEAR_URL}}         # linear.app/<org>/team/<KEY>
+  stack: {{STACK}}            # the AI builder / runtime the validated app will ship on (or "")
 
 docs:
   specs_dir: {{SPECS_DIR}}    # spec docs home, e.g. docs/specs/
   design_dirs: []             # optional: where design references live
 
-product:                      # read by discover (exit/positioning/sensitive) + the play audit
-  positioning: {{POSITIONING}}        # one-line wedge / brand stance (or "")
-  exit_strategy: {{EXIT_STRATEGY}}    # stated exit, keeps framing/claims safe (or "none")
-  sensitive_category: {{SENSITIVE}}   # true → Play Audit flags manipulative plays harder (health, finance, self-image, minors)
-  surfaces: []                # optional: known screens/overlays the Play Audit maps plays onto
+product:                      # read by discover (frame/exit/positioning) + strategy
+  positioning: {{POSITIONING}}        # CURRENT wedge one-liner — the burned-builder / honest-NO
+                                      #   differentiated position an incumbent would avoid copying.
+                                      #   Mirror of the in-play versioned wedge in the launch-thesis brief.
+  exit_strategy: {{EXIT_STRATEGY}}    # stated exit; keeps framing/claims safe (or "none")
+  sensitive_category: {{SENSITIVE}}   # true → strategy flags manipulative plays harder (health, finance, self-image, minors)
+  surfaces: []                # optional: known screens/overlays the strategy step maps plays onto
   playbook_ref: {{PLAYBOOK_REF}}      # OPTIONAL override only — engine is self-sufficient; leave empty unless you license a deck kept outside the plugin
 
 modules:
-  delivery: true
-  testing: true
-  linear: true
-  discover: true
-  validate: true
-  product: true               # play audit + insight loop
+  discover: true              # refine + research (idea → named, hardened wedge)
+  product: true               # strategy: GTM + conversion plays
+  validate: true              # 48h cold-pay-proof guerrilla sprint
+  studio: true                # cross-product playbook
 
-# ── discover module (idea → hardened hypothesis) ──
+# ── discover module (idea → hardened launch thesis) ──
 discover:
   red_team:
     personas: 6
@@ -66,13 +34,13 @@ discover:
   reality_probe: { enabled: true, window_hours: 24, min_contacts_drafted: 10 }
   specs_dir: {{SPECS_DIR}}           # reuse docs.specs_dir
 
-# ── validate module (48h live sprint + guerrilla GTM) — consumed in Plan 2 ──
+# ── validate module (48h live sprint + guerrilla GTM) ──
 validate:
   window_hours: 48
   max_window_hours: 96               # marketplace / considered-purchase only
   budget_cap_usd: 50
   clock_start: first_qualified_impression
-  sprints_dir: .builderkit/studio/sprints
+  sprints_dir: .launchthesis/studio/sprints
   max_concurrent_sprints: 1          # serial-by-default; /validate refuses a 2nd open sprint
   auto_post: false                   # founder posts from own accounts (C1 / ToS)
   gate:
@@ -100,7 +68,7 @@ validate:
     max_repair_attempts: 3           # GATE-NOT-MEASURABLE repair loop
     message_variants_before_kickback: 2
     kill_attribution: { min_qualified_lands: 30 }
-  delivery: { max_days_to_first_access: 30 }
+  handoff: { max_days_to_first_access: 30 }
   gtm:
     named_list_target: 30
     min_warm_channels: 1
@@ -110,48 +78,10 @@ validate:
   payments: { provider: {{PAY_PROVIDER}},    mode: preauth_hold }
   max_rounds: 3                      # GTM/relaunch + message-variation loops
 
-# ── delivery module (ship: waves, scope guard, boundaries, model routing) ──
-delivery:
-  # Drift guard: ship recomputes scope fidelity with templates/delivery/scope-check.mjs
-  # against the audit build-plan + the validate sold-scope. A non-PASS verdict halts ship.
-  scope_guard:
-    enabled: true
-    build_plan: {{SPECS_DIR}}/build-plan.yaml      # the audit DAG (machine-readable)
-    sold_scope: {{SPECS_DIR}}/sold-scope.yaml      # the validate promise (machine-readable)
-  # Wave execution: ship topologically orders build-plan items into waves and fans out
-  # within a wave on DISJOINT file sets (single-writer rule). Cap concurrency to keep
-  # CI/review load sane and the orchestrator able to integrate.
-  waves:
-    max_parallel: 3                  # max build agents in flight at once
-  # Model routing: items at/above the complexity threshold get the stronger model.
-  model_routing:
-    enabled: true
-    complexity_threshold: 4          # build-plan item.complexity >= this -> escalated
-    default_model: sonnet
-    escalated_model: opus            # P0 / architectural / multi-surface work
-  # Bounded review/revision loop on CI or review findings (never an infinite retry).
-  review:
-    max_revision_loops: 3            # fix attempts before escalating to a human
-    escalate_to_human_after: 3
-  # File boundaries (glob syntax: * one segment, ** any depth). Mirrors the brand audit:
-  # declined plays + sensitive surfaces become mechanical guardrails, not just prose.
-  boundaries:
-    never_touch:                     # ship MUST NOT modify these; a hit fails the phase
-      - "**/*.lock"
-      - "**/package-lock.json"
-      - ".env*"
-      - "**/migrations/**"
-      - ".github/workflows/**"
-      - "**/secrets/**"
-    require_review:                  # ship MAY touch but MUST surface in the PR for human review
-      - "**/auth/**"
-      - "**/*.config.*"
-      - "**/payments/**"
-
 # ── studio (cross-product learning loop) ──
 studio:
   enabled: true
-  dir: .builderkit/studio
-  success_criterion: ">=N retained paying users 30 days after first ship"
+  dir: .launchthesis/studio
+  success_criterion: ">=N retained paying users 30 days after launch"
   promote_after_k: 2
-  max_concept_cycles: 3              # global discover<->validate round-trips per seed
+  max_concept_cycles: 3              # bounds wedge re-cuts + GTM iterations per seed

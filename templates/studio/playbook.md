@@ -1,13 +1,22 @@
 # Studio playbook — cross-product priors
 
 > Aggregate patterns ONLY. Never store raw emails or per-user rows here (PII lives
-> in the project's validate.data store). Priors are advisory and can NEVER auto-fail
-> a gate. Down-weight entries older than ~90 days.
+> in the project's validate.data store, under `.launchthesis/`). Priors are advisory
+> and can NEVER auto-fail a gate. Down-weight entries older than ~90 days.
 
 ## How to read this file
 Every entry carries a `status` and a sample count:
 - `hypothesis (n=1)` — an untested guess from a single run. Surface as "untested guess".
 - `supported (n>=k)` — corroborated across >= studio.promote_after_k runs AND >= 2 distinct ICPs.
+
+## Wedge patterns → conversion
+<!-- The versioned wedge is the subject of the thesis. Track which wedge PATTERNS
+     (the cross-product shape of the position, NOT a specific product's wording or
+     any PII) convert cold strangers. A row is `hypothesis` until corroborated;
+     promote to `supported` per the rules above. A refuted wedge is recorded too —
+     a pattern that consistently fails to convert is as valuable a prior as one that
+     wins. Aggregate only; no PII. -->
+<!-- | wedge pattern | icp_type | status (hypothesis|supported) | runs | cold land→pay rate | note | -->
 
 ## GTM tactics that converted (by ICP type)
 <!-- | tactic | icp_type | channel | status | runs | cold land→pay rate | note | -->

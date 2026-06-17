@@ -1,6 +1,6 @@
-# Hardened Hypothesis Brief — {{SEED_SLUG}}
+# Launch Thesis — {{SEED_SLUG}}
 
-> Written by /builderkit:discover (D4). Feeds /builderkit:audit then /builderkit:validate.
+> Written by /launchthesis:discover (D4). Feeds /launchthesis:strategy then /launchthesis:validate.
 > Every claim that clears a red-team kill or establishes the WTP path carries a source +
 > retrieval date. Model-opinion claims are labeled as such.
 
@@ -34,8 +34,30 @@
 ## Value proposition
 {{VALUE_PROP}}
 
-## Named wedge
-{{WEDGE}}  <!-- position vs. feature; why an incumbent would structurally avoid copying it. Recorded to product.positioning -->
+## Wedge (versioned)
+<!--
+  Source of truth for the wedge. D1 emits a `candidate`; D3 promotes it to `named` and
+  writes the object here + mirrors `statement` to product.positioning in config.
+  status: candidate | named | validated | refuted.
+  A wedge-refuted Gate V FAIL re-cut bumps `version`, marks the prior `refuted` with a
+  `refuted_by`, and re-enters D3 (bounded by studio.max_concept_cycles).
+-->
+```yaml
+wedge:
+  statement: "{{WEDGE}}"   # one-line differentiated position an incumbent would avoid copying
+  version: {{WEDGE_VERSION}}
+  status: {{WEDGE_STATUS}}        # candidate | named | validated | refuted
+  history:
+    - version: {{WEDGE_VERSION}}
+      statement: "{{WEDGE}}"
+      status: {{WEDGE_STATUS}}
+      refuted_by: {{REFUTED_BY}}  # only on a refuted version; else omit
+      date: {{WEDGE_DATE}}
+```
+
+**Current statement (prose):** {{WEDGE}}
+<!-- position vs. feature; why an incumbent would structurally avoid copying it.
+     Mirrored to product.positioning in .launchthesis/config.yaml. -->
 
 ## Monetization + willingness to pay
 - Model + who pays: {{...}}
@@ -47,8 +69,8 @@
 ## Riskiest assumptions (ranked, provenance-tagged)
 1. {{...}}  [model-opinion | cited-external-source | real-human-contact]
 
-## Intended surfaces sketch (for /builderkit:audit)
-<!-- the screens/overlays the solution will have, so the Play Audit can map plays onto them -->
+## Intended surfaces sketch (for /launchthesis:strategy)
+<!-- the screens/overlays the solution will have, so the Play Strategy can map plays onto them -->
 - {{...}}
 
 ## Falsifiable validation hypothesis

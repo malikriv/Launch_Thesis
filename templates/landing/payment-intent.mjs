@@ -1,4 +1,4 @@
-// BuilderKit validate — the HARD willingness-to-pay signal: a real card PRE-AUTH
+// LaunchThesis validate — the HARD willingness-to-pay signal: a real card PRE-AUTH
 // (Stripe manual-capture), never settled, auto-voided at sprint end. live:true is
 // recorded ONLY after a confirmed authorization — never on a bare fetch — so a
 // mis-wired page degrades to an honest SOFT signal instead of a fabricated PASS.
@@ -29,7 +29,7 @@ export async function startPreauth(capture) {
     await capture("payment", { amount, live: true });
     return { ok: true, mode: "preauth" };
   } catch (e) {
-    console.error("[builderkit] preauth failed:", e);
+    console.error("[launchthesis] preauth failed:", e);
     if (typeof document !== "undefined") showWarning("Payment hold could not be set up — recorded as interest only.");
     await capture("intent_click");
     return { ok: false, mode: "soft", error: String(e) };

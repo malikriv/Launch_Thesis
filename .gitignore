@@ -1,6 +1,10 @@
 .DS_Store
 node_modules/
 
+# LaunchThesis per-project runtime state, created when running the tool on this repo
+# (the dogfood). Ephemeral per-sprint state + any PII-bearing local capture stays local.
+.launchthesis/studio/sprints/
+
 # Safety net — keep licensing-meta and personal licensed-content files out of the public repo.
 # These are guides/personal references, NOT plugin files. Never commit them.
 BUILDERKIT-INTEGRATION.md

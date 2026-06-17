@@ -1,7 +1,7 @@
--- BuilderKit validate — capture store (Postgres / Supabase flavored).
+-- LaunchThesis validate — capture store (Postgres / Supabase flavored).
 -- Idempotent: the unique key collapses refreshes/retries so counts can't inflate.
 -- Columns mirror the gate-eval.mjs event shape exactly.
-create table if not exists builderkit_events (
+create table if not exists launchthesis_events (
   id           bigint generated always as identity primary key,
   ts           timestamptz not null default now(),
   tier         text not null check (tier in
@@ -19,5 +19,5 @@ create table if not exists builderkit_events (
   unique (dedupe_key)
 );
 -- Upsert pattern (client/edge uses ON CONFLICT DO NOTHING so the FIRST signal wins):
---   insert into builderkit_events (tier,cohort,email,session,source,amount,live,is_founder)
+--   insert into launchthesis_events (tier,cohort,email,session,source,amount,live,is_founder)
 --   values (...) on conflict (dedupe_key) do nothing;
