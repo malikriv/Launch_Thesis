@@ -1,12 +1,12 @@
 {
-  "name": "builderkit",
-  "description": "BuilderKit — demand-first app-studio pipeline: discover → audit → validate → ship → e2e → Linear → loop.",
+  "name": "launchthesis",
+  "description": "LaunchThesis — the validation loop that won't lie to you: Refine → Research → Validate, gated on a real cold-stranger pay-proof, with a playbook that compounds.",
   "owner": { "name": "malikriv" },
   "plugins": [
     {
-      "name": "builderkit",
+      "name": "launchthesis",
       "source": "./",
-      "description": "Discover · audit · validate · ship · e2e · Linear · loop — the full demand-first studio pipeline for Claude Code."
+      "description": "Prove real cold demand before you build (or get told not to). Refine → Research → Validate, in loops, with a compounding studio playbook — for Claude Code."
     }
   ]
 }

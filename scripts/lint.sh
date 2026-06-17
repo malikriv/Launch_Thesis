@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# BuilderKit plugin lint — structural checks + portability guards.
+# LaunchThesis plugin lint — structural checks + portability guards.
 # Usage: scripts/lint.sh [--complete]   (--complete also enforces the full file manifest)
 set -uo pipefail
 cd "$(dirname "$0")/.."
@@ -34,37 +34,43 @@ done < <(find skills -name 'SKILL.md' -print0 2>/dev/null; find commands -name '
 # 5. Full manifest (only with --complete)
 if [ "${1:-}" = "--complete" ]; then
   for f in \
-    .claude-plugin/plugin.json .claude-plugin/marketplace.json README.md \
+    .claude-plugin/plugin.json \
+    .claude-plugin/marketplace.json \
+    README.md \
     templates/config.template.yaml \
-    commands/setup.md commands/ship.md commands/linear-issue.md commands/e2e.md \
-    skills/studio-setup/SKILL.md skills/ship-feature/SKILL.md skills/linear/SKILL.md \
-    skills/e2e-testing/SKILL.md skills/e2e-testing/drivers/maestro.md skills/e2e-testing/drivers/playwright.md \
+    commands/setup.md \
     commands/discover.md \
+    commands/strategy.md \
+    commands/validate.md \
+    skills/studio-setup/SKILL.md \
     skills/discover/SKILL.md \
     skills/discover/references/red-team-personas.md \
     skills/discover/references/demand-intensity-rubric.md \
     skills/discover/references/reality-probe.md \
-    templates/discover/hypothesis-brief.md \
-    templates/studio/playbook.md templates/studio/validation-log.md templates/studio/learnings.md \
-    templates/audit/build-plan.template.yaml \
-    templates/delivery/sold-scope.template.yaml \
-    templates/delivery/scope-check.mjs templates/delivery/scope-check.test.mjs \
-    templates/delivery/scope-check.integration.test.mjs \
-    templates/delivery/scope-run.mjs \
-    commands/audit.md \
-    skills/product-strategy/SKILL.md skills/product-strategy/reference/play-engine.md \
-    templates/landing/gate-eval.mjs templates/landing/gate-eval.test.mjs \
-    templates/landing/schema.sql templates/landing/capture.js \
-    templates/landing/wiring-reference.html templates/landing/payment-intent.mjs \
-    templates/landing/gate-run.mjs templates/landing/gate-run.test.mjs \
-    templates/landing/server/capture.route.mjs templates/landing/server/preauth.route.mjs \
-    templates/landing/privacy.md templates/landing/README.md \
-    scripts/test.sh \
-    commands/validate.md skills/validate/SKILL.md \
-    skills/validate/references/landing-conversion.md skills/validate/references/honesty-floor.md skills/validate/references/guerrilla-playbook.md \
+    templates/discover/launch-thesis.md \
+    skills/product-strategy/SKILL.md \
+    skills/product-strategy/reference/play-engine.md \
+    skills/validate/SKILL.md \
+    skills/validate/references/landing-conversion.md \
+    skills/validate/references/honesty-floor.md \
+    skills/validate/references/guerrilla-playbook.md \
     templates/validate/validation-report.md \
-    templates/maestro/boot.yaml templates/maestro/smoke.yaml templates/maestro/ci-workflow.yml \
-    templates/playwright/auth.setup.ts templates/playwright/evidence.ts templates/playwright/smoke.spec.ts templates/playwright/ci-workflow.yml templates/playwright/playwright.config.template.ts; do
+    templates/validate/handoff.md \
+    templates/landing/gate-eval.mjs \
+    templates/landing/gate-eval.test.mjs \
+    templates/landing/schema.sql \
+    templates/landing/capture.js \
+    templates/landing/wiring-reference.html \
+    templates/landing/payment-intent.mjs \
+    templates/landing/gate-run.mjs \
+    templates/landing/gate-run.test.mjs \
+    templates/landing/server/capture.route.mjs \
+    templates/landing/server/preauth.route.mjs \
+    templates/landing/privacy.md \
+    templates/landing/README.md \
+    templates/studio/playbook.md \
+    templates/studio/validation-log.md \
+    scripts/test.sh; do
     [ -f "$f" ] || err "missing required file: $f"
   done
 fi

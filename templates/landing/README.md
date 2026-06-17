@@ -1,7 +1,7 @@
 # templates/landing — the validate conversion asset
 
 A provider-shaped scaffold for the 48-hour validation sprint. Copy into your project,
-fill the `{{TOKENS}}` from `.builderkit/config.yaml` + the discover brief, wire the two
+fill the `{{TOKENS}}` from `.launchthesis/config.yaml` + the discover brief, wire the two
 connectors, deploy.
 
 ## Pieces
@@ -10,7 +10,7 @@ connectors, deploy.
   page in your own tool (see `skills/validate/references/landing-conversion.md`) and
   reuse this wiring. The kit ships no auto-page.
 - `capture.js` — cookieless, idempotent client capture; cohort from the link's `?src=`.
-- `schema.sql` — the `builderkit_events` table (unique `dedupe_key` = idempotency).
+- `schema.sql` — the `launchthesis_events` table (unique `dedupe_key` = idempotency).
 - `payment-intent.mjs` — the HARD signal: a Stripe manual-capture **pre-auth** (no money moves).
 - `gate-eval.mjs` — recomputes the Gate V verdict from the raw rows (see below).
 - `gate-run.mjs` — the canonical Gate V scorer CLI (`node gate-run.mjs --export rows.json

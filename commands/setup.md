@@ -1,9 +1,10 @@
 ---
-description: BuilderKit phased onboarding — detect stack, write .builderkit/config.yaml, walk the 4 e2e testing phases
+description: LaunchThesis onboarding — detect the project, write .launchthesis/config.yaml, provision the studio store
 ---
-Invoke the builderkit `studio-setup` skill and follow it end-to-end. If the
-user passed arguments, treat them as scoping (e.g. "phase 3" = jump to that
-phase if prior phases are complete).
+Invoke the launchthesis `studio-setup` skill and follow it end-to-end: detect a
+light project context, write `.launchthesis/config.yaml` from the slim template,
+and provision the studio store + the `product:` block.
 
-Setup does NOT require an existing app — an idea-stage founder can run it on an empty
-repo and proceed straight to /builderkit:discover.
+Setup does NOT require an app — idea-stage is the normal case. A founder with
+only an idea can run this on an empty repo and proceed straight to
+`/launchthesis:discover <seed>`.

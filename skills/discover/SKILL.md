@@ -1,14 +1,15 @@
 ---
 name: discover
 description: >
-  BuilderKit's demand-first idea funnel: take a seed — problem, idea, or population —
-  through cheap-to-expensive tiers and harden the survivors into a validated hypothesis
-  BEFORE any build. Triage (cheap go/no-go) → demand smoke (pre-sell / fake-door for a
-  real market pulse) → deep hardening (multi-agent red-team, symmetric need assessment,
-  exit-safe framing) only on a pulse → Hardened Hypothesis Brief → Gate D. Kills losers
-  cheap; spends the expensive machinery only on ideas the market already nodded at.
-  Self-contained; built-in primitives + the project's declared MCP connectors. Reads
-  .builderkit/config.yaml; output feeds /builderkit:audit then /builderkit:validate.
+  LaunchThesis's demand-first idea funnel: take a seed — problem, idea, or population —
+  through cheap-to-expensive tiers and harden the survivors into a named, versioned wedge
+  BEFORE any build. Triage (cheap go/no-go; emits a candidate wedge) → demand smoke
+  (pre-sell / fake-door for a real market pulse) → deep hardening (multi-agent red-team,
+  symmetric need assessment, exit-safe framing; promotes the wedge to named) only on a
+  pulse → Launch Thesis brief → Gate D. Kills losers cheap; spends the expensive machinery
+  only on ideas the market already nodded at. Self-contained; built-in primitives + the
+  project's declared MCP connectors. Reads .launchthesis/config.yaml; output feeds
+  /launchthesis:strategy then /launchthesis:validate.
 ---
 
 # /discover — demand-first idea funnel
@@ -19,8 +20,8 @@ each tier is a kill gate, and the costly machinery (the multi-agent red-team) on
 touches ideas that already show a market pulse. The goal is maximum successful launches
 across many ideas, so throughput and cheap disconfirmation beat per-idea rigor.
 
-**Config first.** Read `.builderkit/config.yaml` before D0. Missing → stop and point
-the user at `/builderkit:setup`. Reads the `product:` block (`exit_strategy`,
+**Config first.** Read `.launchthesis/config.yaml` before D0. Missing → stop and point
+the user at `/launchthesis:setup`. Reads the `product:` block (`exit_strategy`,
 `positioning`, `sensitive_category`) and `discover.*`. The project's `CLAUDE.md`
 overrides this skill where they conflict.
 
@@ -60,13 +61,17 @@ A fast desk pass, minutes not hours. Four questions:
 Any hard "no" with no cheap fix → **kill/shelve here** (record why). No research spend
 yet. Survivors go to the smoke.
 
+The wedge question, when it passes, emits a **candidate wedge** (`status: candidate`):
+a differentiated position sharp enough to clear D1 but not yet hardened. It is the first
+version of the versioned-wedge object that D3 will promote.
+
 ## D2 — Demand smoke (cheap real signal; pulse gate)
 
 Get a market **pulse** with the cheapest real test before any heavy analysis. Run
 `${CLAUDE_PLUGIN_ROOT}/skills/discover/references/reality-probe.md`: the agent drafts
 named-list pre-sell DMs (Mom-Test framed) + an optional no-build fake-door (a form or
 one static page); the founder runs them within `discover.reality_probe.window_hours`.
-**No landing/Supabase/Stripe stack here** — that is `/builderkit:validate`; D2 stays
+**No landing/Supabase/Stripe stack here** — that is `/launchthesis:validate`; D2 stays
 cheap on purpose.
 
 **Pulse gate:**
@@ -91,7 +96,14 @@ Now spend the costly machinery on the survivors:
   `${CLAUDE_PLUGIN_ROOT}/skills/discover/references/red-team-personas.md` via the
   `Workflow` orchestrator (parallel personas + verify); a ranked riskiest-assumptions
   ledger.
-- **Named wedge** — state the wedge explicitly; record to `product.positioning`.
+- **Named wedge (promote candidate → named)** — state the wedge explicitly and promote
+  it to `status: named`. Write the **versioned wedge object** (statement + version +
+  status + history) into the Launch Thesis brief (the source of truth), AND mirror the
+  current `statement` to `product.positioning` in `.launchthesis/config.yaml`. This is
+  the wedge that arms Strategy + Validate. On a **re-cut iteration** (entered later from
+  `/launchthesis:validate` on a wedge-refuted Gate V FAIL), produce **version N+1**: bump
+  `wedge.version`, set the prior version to `status: refuted` with a `refuted_by`, and
+  harden the new cut. The re-cut loop is bounded by `studio.max_concept_cycles`.
 - **Exit-safe framing check** — names/claims/trademark vs. the stated exit.
 
 ## Gate D — neutral triage (`kill_threshold: evidence_gated`)
@@ -105,20 +117,21 @@ Send back to the drawing board ONLY on:
 Bounded by `discover.red_team.max_rounds`; on exhaustion, stop and ask the human to
 pivot or shelve. Surviving lower-ranked assumptions become sprint tests, never blockers.
 
-## D4 — Hardened Hypothesis Brief
+## D4 — Launch Thesis brief
 
-Write `<docs.specs_dir>/YYYY-MM-DD-<slug>-hypothesis.md` from
-`${CLAUDE_PLUGIN_ROOT}/templates/discover/hypothesis-brief.md`, including: stated exit,
-named wedge, exit-safe framing check, the D2 pulse evidence, and a light
-**intended-surfaces sketch** so `/builderkit:audit` can map plays onto it. This brief
-feeds `/builderkit:audit` (build plan) → `/builderkit:validate` (real cold-pay-proof
-sprint).
+Write `<docs.specs_dir>/YYYY-MM-DD-<slug>-launch-thesis.md` from
+`${CLAUDE_PLUGIN_ROOT}/templates/discover/launch-thesis.md`, including: stated exit, the
+**named, versioned wedge** (statement + version + status + history), exit-safe framing
+check, the D2 pulse evidence, and a light **intended-surfaces sketch** so
+`/launchthesis:strategy` can map plays onto it. This brief is the source of truth for the
+wedge; it feeds `/launchthesis:strategy` (GTM + conversion plays) → `/launchthesis:validate`
+(real cold-pay-proof sprint).
 
 ## Studio loop
 
-Read `.builderkit/studio/playbook.md` at start as PRIORS (advisory only — never gate).
+Read `.launchthesis/studio/playbook.md` at start as PRIORS (advisory only — never gate).
 On finishing (including kills at any tier), append a row to
-`.builderkit/studio/validation-log.md` (seed, archetype, tier reached, verdict).
+`.launchthesis/studio/validation-log.md` (seed, archetype, tier reached, verdict).
 Aggregate patterns only — no PII in `studio/`.
 
 ## Multi-agent quick reference

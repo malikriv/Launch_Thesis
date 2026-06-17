@@ -7,7 +7,7 @@ families with their metrics and analysis lenses, a built-in library of product-d
 and the metric→play wiring for the Insight Loop.
 
 Everything here is general product-design knowledge expressed as an operational engine. The
-**in-practice notes and pairing graph are original BuilderKit material**, reasoned from how each
+**in-practice notes and pairing graph are original LaunchThesis material**, reasoned from how each
 pattern actually works — not derived from any specific commercial deck. Stack- and
 product-agnostic.
 
@@ -22,7 +22,7 @@ product-agnostic.
 
 Normalize every play to: **Mechanic** (what it does) · **Why it works** · **When** · **Do /
 Don't** · **Pairs with** · **In practice** (the experiential one-liner) · **Maps to**
-(audit-time: the concrete surface in *this* product + a P0/P1/P2 tier).
+(strategy-time: the concrete surface in *this* product + a P0/P1/P2 tier).
 
 ---
 
@@ -43,7 +43,7 @@ Don't** · **Pairs with** · **In practice** (the experiential one-liner) · **M
 | **Habit Formation** | Sticky repeated usage | WAU, Session Frequency, Streak Completion, Return-30d | usage rhythm · reinforcement · behavioural triggers |
 | **Premium Positioning** | High-value perception | ARPU, Price Sensitivity, Premium CSAT | premium value · pricing power · premium experience |
 
-**Weighting rubric (Step 1 of every audit):** daily-habit product → Habit + Retention +
+**Weighting rubric (Step 1 of every strategy pass):** daily-habit product → Habit + Retention +
 Onboarding Critical · one-shot utility → Activation + Sharing + TTV Critical, Habit Later ·
 trust-led / sensitive / regulated → Trust Building Critical and governs what's allowed ·
 pre-revenue → Monetisation / Premium / Conversion Later.
@@ -138,7 +138,7 @@ Recognised patterns grouped by function. Each carries an original in-practice no
 
 ## Compounding combos (pairing graph)
 
-Original BuilderKit pairings — which plays multiply each other, and why. Reach for the whole
+Original LaunchThesis pairings — which plays multiply each other, and why. Reach for the whole
 combo, not the single play, when the goal in the heading is the job.
 
 - **Activation triad — `setup defaults + empty states + time-to-value`.** Defaults kill the blank page, empty states point at the first action, TTV compresses the path to it. Use together whenever first-run matters.
@@ -155,7 +155,7 @@ combo, not the single play, when the goal in the heading is the job.
 
 ## High-leverage primitives
 
-When unsure where to start an audit, these recur across the most strategies and are usually
+When unsure where to start a strategy pass, these recur across the most strategies and are usually
 safe, on-brand entry points: **success moments · time-to-value · habit engine (streak/
 progress) · micro-interactions · personalisation (on-device where privacy is the wedge) ·
 progressive disclosure.**
@@ -164,7 +164,7 @@ progressive disclosure.**
 
 ## Flagging rules (the part that protects the brand)
 
-A Play Audit is not "apply every play." Declining plays is a deliverable. Apply every run:
+A play-strategy pass is not "apply every play." Declining plays is a deliverable. Apply every run:
 
 - **Sensitive category** (`product.sensitive_category: true` — health, finance, self-image,
   minors): flag manipulation-adjacent plays hard. **Variable reward**, **fake/urgency limited
@@ -193,7 +193,7 @@ Encode each flagged play as: **use as-is / constrain (how) / skip (why).**
 - **Permission Grant** = (granted ÷ requested) × 100 · **Task Success** = (completed ÷ attempts) × 100 · **Error Rate** = (failed ÷ total) × 100
 - **K-factor** = invites/user × acceptance · **Organic Growth** = (new organic ÷ total) × 100
 
-### Metric → play wiring (fill per product during an audit)
+### Metric → play wiring (fill per product during a strategy pass)
 
 | Metric | This product's definition | Plays that move it |
 |--------|---------------------------|--------------------|
@@ -206,4 +206,4 @@ Encode each flagged play as: **use as-is / constrain (how) / skip (why).**
 1. Pick **one** metric to improve.
 2. Read that family's analysis lens (table above).
 3. Match findings to the play(s) — or the combo — that kills the friction.
-4. Ship **one** play (`/builderkit:ship`), then re-measure — never batch.
+4. Build and ship **one** play via your own build workflow, then re-measure — never batch.

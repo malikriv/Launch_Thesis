@@ -1,4 +1,4 @@
-// BuilderKit validate — reference capture route (Supabase flavored, Vercel/Node handler).
+// LaunchThesis validate — reference capture route (Supabase flavored, Vercel/Node handler).
 // Copy into your app's /api/capture. Inserts one row, idempotent via the schema's
 // dedupe_key (on conflict do nothing). Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
 export default async function handler(req, res) {
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     session: body.session, source: body.source || "", amount: body.amount || 0,
     live: !!body.live, is_founder: !!body.is_founder,
   };
-  const r = await fetch(`${process.env.SUPABASE_URL}/rest/v1/builderkit_events`, {
+  const r = await fetch(`${process.env.SUPABASE_URL}/rest/v1/launchthesis_events`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

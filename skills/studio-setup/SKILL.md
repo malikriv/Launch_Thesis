@@ -1,137 +1,100 @@
 ---
 name: studio-setup
 description: >
-  BuilderKit phased onboarding for a project: detect stack, write
-  .builderkit/config.yaml, then walk the 4 e2e testing phases one at a time,
-  each scaffolded from plugin templates and verified live before the next.
-  Idempotent — re-runs skip completed phases and repair drift. Use via
-  /builderkit:setup or whenever .builderkit/config.yaml is missing.
+  LaunchThesis slim onboarding for a project: detect a light project context,
+  write .launchthesis/config.yaml from the slim template, and provision the
+  studio store plus the product block. Idempotent — re-runs skip completed
+  work and repair drift, never overwriting without a diff. Greenfield
+  (idea-only, no app) is the normal case. Use via /launchthesis:setup or
+  whenever .launchthesis/config.yaml is missing.
 ---
 
-# BuilderKit setup — phased onboarding
+# LaunchThesis setup — slim onboarding
 
-## Step 1 — Detect
+Detect a light project context, write `.launchthesis/config.yaml` from the slim
+template, and provision the studio store + the `product:` block. The flow is
+**idempotent**: a re-run skips work that's already done and repairs drift, and
+**never overwrites an existing file without showing a diff first**.
 
-Read package.json(s), lockfiles, repo layout:
-- deps `expo`/`react-native` → stack `expo`, driver `maestro`
-- `vite`/`next` + web entry → stack `web-pwa`/`web`, driver `playwright`
-- existing e2e dirs (`.maestro/`, `e2e/`, `playwright.config.*`), CI
-  workflows, test runners, monorepo workdir.
-- Monorepo with both (e.g. an Expo app plus a vite/next site): detect at the chosen `commands.workdir`; if that package has both, expo/RN wins (it's the shippable app). Surface the ambiguity in the Step 2 confirmation.
-- Linear MCP reachability (`list_teams`); note the team key for this product.
+Idea-stage is the normal case here — LaunchThesis forms and proves a launch
+thesis *before* there's an app. Setup does not require a buildable project.
 
-**Greenfield (idea-stage) branch.** Empty stack/driver/dev is EXPECTED, not a detection
-failure — the founder may have only an idea. When detection finds no buildable app, take
-the greenfield path: in Step 2 write ONLY the app-free sections (`project.name`, `docs`,
-`product`, `discover`, `validate`, `studio`, `modules`) with `modules.testing: false`
-and leave `testing.*` blank; in Step 3 SKIP the four-phase e2e walk and tell the founder
-"setup is done — run `/builderkit:discover <seed>` next." Do not flag blank `testing.*`
-as drift while `modules.testing` is false; the testing phases come online later, after
-`/builderkit:ship` produces an app.
+## Step 1 — Detect (light)
+
+Read what's cheaply available to fill the slim config — no testing-driver,
+maestro, playwright, or Linear detection.
+
+- **Project name** — from `package.json` `name`, the repo directory, or ask.
+- **Stack (optional)** — a light read of `package.json`/lockfiles/layout if an
+  app exists (e.g. expo/react-native, vite/next, plain web). Purely
+  informational; leave blank if there's no app.
+- **Docs / specs dir** — where briefs and reports should land (e.g. `docs/specs`).
+
+**Greenfield (idea-only) is the NORMAL case, not a detection failure.** When
+there is no app — just an idea — that is the expected starting point. Write the
+config and provision the studio exactly the same way; the stack field stays
+blank and validate degrades any unconfigured infra step to planner-mode.
 
 ## Step 2 — Configure
 
 Fill `${CLAUDE_PLUGIN_ROOT}/templates/config.template.yaml` from detection,
-show the result, get the user's confirmation (one consolidated question),
-write `.builderkit/config.yaml`. Never overwrite an existing config without
+show the filled result, ask **one consolidated confirmation** question, then
+write `.launchthesis/config.yaml`. Never overwrite an existing config without
 showing a diff first.
 
-## Step 2.5 — Provision discover / validate / studio / product
+The slim config carries only `project`, `docs`, `product`, `discover`,
+`validate`, `studio`, and `modules` (`modules` is just
+`discover / product / validate / studio`). There is no `commands:`, `testing:`,
+`linear:`, or `delivery:` block.
 
-The config template now carries `discover:`, `validate:`, `studio:`, and `product:`
-sections and `modules.discover/validate/product` (written in Step 2). Additionally:
+## Step 3 — Provision studio + product
 
-- If `modules.discover` or `modules.validate` is true, create the studio store:
-  copy `${CLAUDE_PLUGIN_ROOT}/templates/studio/playbook.md` and
-  `templates/studio/validation-log.md` into `.builderkit/studio/` (the dir from
-  `studio.dir`), and create `.builderkit/studio/sprints/` (from `validate.sprints_dir`).
-  Never overwrite an existing studio file without showing a diff.
-- If `modules.delivery` is true, seed the permanent memory tier: copy
-  `${CLAUDE_PLUGIN_ROOT}/templates/studio/learnings.md` to `.builderkit/learnings.md`
-  (the file every ship run reads at Phase 0). Never overwrite an existing one without a diff.
-- Fill the new template tokens from detection/confirmation:
-  `SPECS_DIR` (= `docs.specs_dir`), and the validate infra targets
-  `DEPLOY_PROVIDER`/`DEPLOY_PROJECT`, `DATA_PROVIDER`/`DATA_PROJECT`,
-  `PAY_PROVIDER`. Leave any unknown infra target blank — `validate` degrades that
-  step to planner-mode (constraint C2).
-  When `DATA_PROVIDER` is non-blank, copy `${CLAUDE_PLUGIN_ROOT}/templates/landing/server/capture.route.mjs`
-  into the project's capture endpoint and set its env (`SUPABASE_URL`,
-  `SUPABASE_SERVICE_ROLE_KEY`); when `PAY_PROVIDER` is non-blank, copy
-  `server/preauth.route.mjs` and set `STRIPE_SECRET_KEY` (LIVE), `BK_PRICE_CENTS`,
-  `BK_CURRENCY`. Adapt the handler signature to the project's framework if it isn't
-  Vercel/Node.
-- gitignore `.builderkit/studio/sprints/` (ephemeral per-sprint state).
-- If the `product` module is enabled, also capture the `product:` block in the same
-  confirmation: `positioning` (one-line wedge), `exit_strategy` (or "none"),
-  `sensitive_category` (true/false), and optional `playbook_ref` (path to the user's
-  licensed play-deck reference, kept outside the plugin). These can be left blank —
-  the `product-strategy` skill self-provisions them on first `/builderkit:audit` run.
+Stand up the cross-product studio store and capture the `product:` block.
 
-## Step 3 — Walk the four phases
+- **Studio store.** Copy `${CLAUDE_PLUGIN_ROOT}/templates/studio/playbook.md`
+  and `templates/studio/validation-log.md` into `.launchthesis/studio/` (the
+  dir from `studio.dir`). Never overwrite an existing studio file without
+  showing a diff. Do **not** copy any `learnings.md` (the two-tier memory tier
+  was removed) and do **not** seed any delivery or testing artifacts.
+- **Sprints dir.** Create `.launchthesis/studio/sprints/` (from
+  `validate.sprints_dir`) and gitignore it — it holds ephemeral per-sprint state.
+- **Product block.** In the same consolidated confirmation, capture the
+  `product:` block:
+  - `positioning` — the current wedge one-liner (a mirror of the in-play
+    thesis wedge).
+  - `exit_strategy` — the stated exit, or `none`.
+  - `sensitive_category` — `true`/`false`.
+  - `surfaces` — optional list of screens the strategy step maps plays onto.
+  - `playbook_ref` — optional override path to a licensed play-deck reference
+    kept outside the plugin (the engine is self-sufficient without it).
 
-For each phase NOT in `testing.phases_complete` (in order 1→4): explain what
-it gives, scaffold it, VERIFY it live, then append the phase number to
-`phases_complete` and commit. Stop cleanly between phases if the user wants —
-each is independently useful.
+  These may be left blank — the `product-strategy` skill self-provisions them
+  on the first `/launchthesis:strategy` run.
+- **Validate infra tokens.** Fill the validate infra targets from
+  detection/confirmation: `DEPLOY_PROVIDER`/`DEPLOY_PROJECT`,
+  `DATA_PROVIDER`/`DATA_PROJECT`, and `PAY_PROVIDER`. Leave any unknown target
+  blank — `validate` degrades that step to **planner-mode**.
+  - When `DATA_PROVIDER` is non-blank, copy
+    `${CLAUDE_PLUGIN_ROOT}/templates/landing/server/capture.route.mjs` into the
+    project's capture endpoint and set its env (`SUPABASE_URL`,
+    `SUPABASE_SERVICE_ROLE_KEY`).
+  - When `PAY_PROVIDER` is non-blank, copy
+    `${CLAUDE_PLUGIN_ROOT}/templates/landing/server/preauth.route.mjs` and set
+    `STRIPE_SECRET_KEY` (LIVE), `LT_PRICE_CENTS`, `LT_CURRENCY`.
+  - Adapt the handler signature to the project's framework if it isn't
+    Vercel/Node.
 
-1. **Dev-login.** maestro/env-creds: a dev-only login mode wired to
-   `commands.dev` (build-flag-gated, creds in a gitignored env file; confirm
-   the release pipeline nulls the flag). playwright/storage-state: install
-   the auth.setup template as a setup project and merge the Playwright config
-   template (never overwrite an existing playwright config — merge); fill
-   variant A (server auth) or B (local-first seed) and delete the other (the
-   unused `expect` import is intentional until you pick). Variant B seeds a
-   minimal inline fixture now; phase 2 promotes it to `testing.seed.seed_file`
-   and proves idempotent reset. VERIFY:
-   `commands.dev` boots to a signed-in/seeded session with zero typing.
-2. **Seed + selectors.** Create/point at `testing.seed.seed_file`; add stable
-   selectors (testID / data-testid) to every element the smoke flow will
-   target, including `testing.boot_sentinel_testid`. VERIFY: seed applies
-   cleanly twice (idempotent reset).
-3. **Flows + evidence.** Scaffold boot + smoke from the driver's template
-   directory, fill placeholders per the token map below, gitignore the
-   evidence dir (and `.auth/` for playwright), add `commands.e2e` /
-   `commands.e2e_smoke` scripts. VERIFY: smoke green twice, evidence PNG
-   lands in `testing.evidence_dir`.
-4. **CI gate.** Install the driver's ci-workflow template at
-   `testing.ci.workflow`, set repo secrets (`gh secret set
-   E2E_DEV_LOGIN_EMAIL` / `E2E_DEV_LOGIN_PASSWORD`), push, dispatch once.
-   VERIFY: run green + evidence artifact downloads. Recommend branch
-   protection once a few runs are green.
+## End
 
-## Token map (template double-brace token → config key)
-
-Templates live in `${CLAUDE_PLUGIN_ROOT}/templates/<driver>/`. When copying
-one into the project, substitute every double-brace token from config:
-
-| Token | Config key | Shape |
-|---|---|---|
-| `APP_ID` | `testing.app_id` | scalar (maestro only) |
-| `BOOT_SENTINEL_TESTID` | `testing.boot_sentinel_testid` | scalar |
-| `CI_NAME` | `testing.ci.workflow_name` | scalar |
-| `CI_RUNNER` | `testing.ci.runner` | scalar or flow array |
-| `APP_PATHS` | `testing.ci.app_paths` | YAML list — render one `- glob` item per entry, same indent |
-| `WORKDIR` | `commands.workdir` | scalar |
-| `DEV_COMMAND` | `commands.dev` | scalar |
-| `DEV_PORT` | `commands.dev_port` | scalar (playwright only) |
-| `DEV_LOGIN_ENV_FILE` | `testing.dev_login.env_file` | scalar |
-| `FLOWS_DIR` | `testing.flows_dir` | scalar |
-| `EVIDENCE_DIR` | `testing.evidence_dir` | scalar |
-| `SPECS_DIR` | `docs.specs_dir` | scalar |
-| `DEPLOY_PROVIDER` / `DEPLOY_PROJECT` | `validate.deploy.*` | scalar (blank → planner-mode) |
-| `DATA_PROVIDER` / `DATA_PROJECT` | `validate.data.*` | scalar (blank → planner-mode) |
-| `PAY_PROVIDER` | `validate.payments.provider` | scalar (blank → planner-mode) |
-
-Hand-authored tokens (no config key — the agent writes project-specific
-lines in their place): `TAB_SWEEP` (one tapOn per primary-nav testid),
-`NAV_SWEEP` (one getByTestId click + assert per primary surface),
-`SEED_MODULE` (the seed fixture import/inline in auth.setup),
-`DEV_CLIENT_BUILD_COMMAND` (the project's one-time dev-client native build command (maestro only), e.g. an expo run:ios script wired to the dev-login env).
+When the config is written and the studio store is provisioned, tell the
+founder: **setup is done — run `/launchthesis:discover <seed>` next.**
 
 ## Drift repair
 
-On re-run, before phases: config says driver X but its flows dir/workflow is
-missing → flag and re-scaffold; commands in config that no longer exist in
-package.json → flag and re-confirm; double-brace tokens left unsubstituted in
-scaffolded files (`grep -rn '[{][{]' <scaffolded paths>`) → fill from the
-token map.
+On a re-run, before re-confirming anything:
+- A studio file named in config (`studio.dir`) is missing → re-provision it from
+  the template (show a diff if a partial file exists).
+- `validate.sprints_dir` is missing → re-create it and re-confirm the gitignore.
+- An infra provider is set in config but its corresponding server route was
+  never copied → flag and copy it, then re-confirm its env vars.
+- Never re-overwrite a file the founder has edited without showing the diff.

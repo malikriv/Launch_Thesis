@@ -1,6 +1,6 @@
 # Validation Report — {{SLUG}}
 
-> Written by /builderkit:validate (V4). The verdict is recomputed by gate-eval.mjs from
+> Written by /launchthesis:validate (V4). The verdict is recomputed by gate-eval.mjs from
 > the raw rows; a verdict without its counted rows is a defect (spec C6).
 
 ## Sprint
@@ -25,18 +25,26 @@
 - Reason: {{REASON}}
 - Counted users: {{N}} · weighted: {{W}} · cold-weight fraction: {{CWF}} · friend share: {{FS}}
 - Cold hard pay-proof: {{YES | NO}}
+- Fail attribution (FAIL only): {{channel_thin | copy_weak | wedge_refuted}}
 - Raw counted rows (ts · tier · cohort · predicate satisfied · exclusions applied):
   {{ROWS}}
 
 ## Captured cold-user list (the waitlist — GOLD; PII lives in validate.data.*, never studio/)
 {{...}}
 
-## Delivery commitment (binding Phase-0 input for /builderkit:ship)
-- The promise the winning page made (feature, price, delivery window stated to payers): {{...}}
-- Paid cohort: {{...}}
-- First-access deadline ({{MAX_DAYS}} days, from validate.delivery.max_days_to_first_access): {{...}}
-- Machine-readable contract emitted: `docs.specs_dir/sold-scope.yaml` (the ship scope
-  guard checks every shippable slice against it — see scope-check.mjs).
+## Honesty-floor drop-off (the kit's #1 health metric)
+- abandoned_at: {{none | pre_pulse | pre_page | pre_lands | pre_launch | mid_window}}
+- The **honesty floor** is `pre_page` (founder never built the real converting page) and
+  `pre_lands` (page built but no confirmed land ever stored). Drop-off there is the
+  make-or-break of vibe-coder fit. Logged to the studio validation-log.
+
+## Handoff
+On a PASS, the **AI-builder handoff** is written to
+`<docs.specs_dir>/{{SLUG}}-handoff.md` from templates/validate/handoff.md — the
+paste-ready build brief. It carries the validated wedge, the sold scope the converting
+page promised payers (price {{PRICE}}, paid cohort {{PAID_COHORT_COUNT}}), and the
+first-access deadline (= validate.handoff.max_days_to_first_access, {{MAX_DAYS}} days). It
+is guidance for the user's own build workflow, not a scope-guard contract.
 
 ## Recommendation
-{{proceed to /builderkit:ship | iterate-GTM (variant before kill) | back to /builderkit:discover | kill}}
+{{proceed: emit handoff | iterate-GTM (copy/offer variant before kill) | re-cut wedge → /launchthesis:discover | kill}}

@@ -7,7 +7,7 @@ WHY people don't bite, which anonymous traffic never will. This runs in `discove
 **D2, before the red-team**, on the cheapest possible assets.
 
 Cheap assets only: named-list pre-sell DMs + an optional no-build fake-door (a form or
-one static page). **No landing/Supabase/Stripe stack** — that is `/builderkit:validate`.
+one static page). **No landing/Supabase/Stripe stack** — that is `/launchthesis:validate`.
 Time-boxed (`discover.reality_probe.window_hours`, default 24). Human-executed (the
 founder sends these from their own accounts). The agent drafts; the founder runs; the
 agent records replies.
@@ -37,4 +37,4 @@ studio playbook.
 ## Honesty
 
 Any fake-door states the real stage; no claiming a finished product, no fabricated
-social proof. The full landing/payment honesty floor lives in `/builderkit:validate`.
+social proof. The full landing/payment honesty floor lives in `/launchthesis:validate`.

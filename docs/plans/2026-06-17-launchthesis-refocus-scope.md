@@ -69,6 +69,11 @@ What it must *not* do for this audience: soften the signal to feel good. Confide
 nothing if the gate isn't real, so the honesty floor and "builder is not the scorer" stay
 non-negotiable (see *Friction calibration*).
 
+**Sharpened by the self-application dogfood** (`2026-06-17-launchthesis-self-application.md`):
+the *buyer* is specifically the **burned** builder — the trigger is a past flop, not
+first-build optimism — and the **honest-NO is the headline**, not a footnote. That sharpening
+is now baked into the README and `plugin.json` positioning.
+
 ## The loop
 
 ```
