@@ -1,6 +1,6 @@
 # Demand-intensity rubric (symmetric, calibrated)
 
-D1 must gather the strongest CONFIRMING **and** DISCONFIRMING evidence — that the
+D3 must gather the strongest CONFIRMING **and** DISCONFIRMING evidence — that the
 problem is already adequately solved, low-frequency, tolerated, or that no one pays
 to fix it. The output is ONE intensity verdict, not a highlight reel of the loudest
 complaints. Vocal-minority forum noise is distinct from prevalence.
@@ -23,9 +23,9 @@ unknown, write "unknown, low confidence" — never a fabricated number.
 - **real-but-tolerable** — real but infrequent or cheaply tolerated.
 - **nice-to-have** — weak on most axes. This is an explicit Gate D red flag.
 
-## Falsification register (required in the dossier)
+## Falsification register (required in the Launch Thesis brief)
 State UP FRONT what evidence would have made you conclude "no burning need," and
-whether you found it. A dossier that never had a chance to fail is not evidence.
+whether you found it. A brief that never had a chance to fail is not evidence.
 
 ## Hand-off
 Feed the verdict + the disconfirming evidence into the D3 red-team. Carry
