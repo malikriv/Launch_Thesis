@@ -380,6 +380,36 @@ so the plugin writes a file the vibe coder pastes, and a SaaS build can serve th
 via an export endpoint or a one-click "send to builder" integration. The same six blocks, two
 surfaces.
 
+## First-run experience (the vibe coder's seat)
+
+The loop from the user's chair, idea → verdict → payoff, showing where friction is cut.
+(Plugin phrasing; the SaaS surface runs the same steps behind a UI.)
+
+0. **Start** — `…setup` (or SaaS onboarding): one screen — name, stack, exit/positioning,
+   sensitive flag. Writes `project`. ~2 min.
+1. **Drop the idea** — `…discover "<seed>"`: a sentence, a screenshot, or a population. The
+   tool frames it (D0) and runs the cheap triage (D1) — and can **NO-GO in minutes** ("don't
+   build this, here's the structural reason"). Writes `thesis` + a `candidate` wedge.
+2. **Cheap pulse** — it drafts the pre-sell DMs / fake-door; the user sends them from their own
+   accounts. A pulse escalates; no pulse re-frames once, then kills. No infra yet — the
+   cheapest real signal.
+3. **Research, automated** — on a pulse the tool fans out the need + red-team research *itself*
+   and names the wedge (D3). The discipline vibe coders skip on their own is the part the tool
+   does for them. Writes `wedge` → `named`.
+4. **Strategy** — `…strategy` weights plays, picks the first-100 channel, flags declined plays,
+   and briefs the conversion page. Writes `strategy`.
+5. **Validate** — `…validate` ships the measurement plumbing + the page brief; the user
+   vibe-codes the page in minutes (their strength) and posts from their accounts. The tool
+   polls and recomputes the gate from raw rows. Writes `sprint` + `event`s + `verdict`.
+6. **Verdict, not a vibe** — GO / NO-GO / ITERATE with the counts + confidence. ITERATE routes
+   to re-channel / copy-variant / wedge-recut; KILL is recorded as a win ("what not to build").
+7. **Payoff** — on GO the **handoff** drops: paste the build prompt into their builder and go.
+   Every run (kills included) appends to the playbook, so the next idea starts smarter.
+
+Cut-friction summary: the tool does the **research and scoring** (the discipline vibe coders
+lack); the user supplies only the **idea, the audience, and a quick page** (their strengths);
+planner-mode keeps the loop moving when a connector is missing.
+
 ## Friction calibration for vibe coders
 
 The tension: vibe coders want fast + cheap; real confidence needs a real signal. Resolve it
