@@ -134,7 +134,8 @@ qualified impressions; if you can't count them, treat the run as NOT-MEASURABLE.
     prior version `refuted` with a `refuted_by` note (e.g. "Gate V FAIL across N offer
     variants, traffic floor met — position not believed"), and return to **Research / D3**
     to harden a new cut (not just a new offer). Studio log: `wedge_refuted`.
-  Bound by `validate.max_rounds` + the global `studio.max_concept_cycles`.
+  Bounds: copy/offer variants by `validate.max_rounds`; wedge re-cuts by
+  `studio.max_wedge_recuts` (within the overall ceiling `studio.max_concept_cycles`).
 - **NOT-MEASURABLE** — analytics never fired / payments stuck in sandbox -> fix
   instrumentation (bounded by `validate.gate.max_repair_attempts`); on exhaustion,
   degrade to a human-judged manual count from the raw evidence.

@@ -84,4 +84,7 @@ studio:
   dir: .launchthesis/studio
   success_criterion: ">=N retained paying users 30 days after launch"
   promote_after_k: 2
-  max_concept_cycles: 3              # bounds wedge re-cuts + GTM iterations per seed
+  max_concept_cycles: 3              # the ceiling: total discover<->validate round-trips per seed
+  max_wedge_recuts: 2                # of those, how many may be a wedge RE-CUT (the expensive
+                                     #   cycle — a new named position); GTM/offer re-tests are
+                                     #   bounded separately by validate.max_rounds

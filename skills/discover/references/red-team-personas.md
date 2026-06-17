@@ -34,13 +34,9 @@ A single ranked list (not per-persona verdicts). The #1 item becomes the headlin
 validation sprint is built to disconfirm first. Lower-ranked surviving assumptions
 become sprint tests in the brief, never blockers.
 
-## Gate D (`kill_threshold: evidence_gated`) fails ONLY on:
-- (a) no plausible WTP path from real spend data, OR
-- (b) no cheaply-reachable audience the founder can personally access (cannot name
-  >= 2 communities with non-zero standing), OR
-- (c) an unresolved TOP-ranked assumption whose provenance is `model-opinion` with no
-  cheap test path, OR
-- (d) a D3 intensity verdict of `nice-to-have`.
-
-Everything else proceeds — Gate D is neutral triage ("no fatal flaw found on paper"),
-and the $50 sprint is the real backstop.
+## Gate D — defined once, in the skill
+The red-team's job ends at the ranked riskiest-assumptions ledger above. **Gate D's
+neutral-triage fail conditions are canonical in `skills/discover/SKILL.md` (the "Gate D"
+section) — do not restate them here** (two copies drift). In short: Gate D fails only on
+no WTP path, no reachable audience, an unresolved top `model-opinion` assumption, or a
+`nice-to-have` intensity; everything else proceeds, and the $50 sprint is the real backstop.

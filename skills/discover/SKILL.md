@@ -48,7 +48,7 @@ everything downstream is judged against it); **founder-access** (communities the
 founder already has, with standing per community: none/lurker/member/contributor/known).
 Idea-first → work back to the problem; population-first → find its sharpest pain.
 
-## D1 — Triage gate (cheap go/no-go; absorbs the old evaluate)
+## D1 — Triage gate (cheap go/no-go)
 
 A fast desk pass, minutes not hours. Four questions:
 - **Wedge** — a differentiated *position* (not just a feature) an incumbent would
@@ -99,11 +99,14 @@ Now spend the costly machinery on the survivors:
 - **Named wedge (promote candidate → named)** — state the wedge explicitly and promote
   it to `status: named`. Write the **versioned wedge object** (statement + version +
   status + history) into the Launch Thesis brief (the source of truth), AND mirror the
-  current `statement` to `product.positioning` in `.launchthesis/config.yaml`. This is
-  the wedge that arms Strategy + Validate. On a **re-cut iteration** (entered later from
+  current `statement` to `product.positioning` in `.launchthesis/config.yaml` (if the
+  config is absent — e.g. setup hasn't run — keep the wedge in the brief and WARN; never
+  silently skip the mirror, or the brief and config desync). This is the wedge that arms
+  Strategy + Validate. On a **re-cut iteration** (entered later from
   `/launchthesis:validate` on a wedge-refuted Gate V FAIL), produce **version N+1**: bump
   `wedge.version`, set the prior version to `status: refuted` with a `refuted_by`, and
-  harden the new cut. The re-cut loop is bounded by `studio.max_concept_cycles`.
+  harden the new cut. The re-cut loop is bounded by `studio.max_wedge_recuts` (within the
+  overall `studio.max_concept_cycles`).
 - **Exit-safe framing check** — names/claims/trademark vs. the stated exit.
 
 ## Gate D — neutral triage (`kill_threshold: evidence_gated`)
