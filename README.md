@@ -144,11 +144,10 @@ See **[LaunchThesis run on itself](docs/plans/2026-06-17-launchthesis-self-appli
 
 ## Install
 
-Add the marketplace and install the plugin (the marketplace source repo is still
-`malikriv/builderkit`; the plugin is `launchthesis`):
+Add the marketplace and install the plugin:
 
 ```
-/plugin marketplace add malikriv/builderkit
+/plugin marketplace add malikriv/Launch_Thesis
 /plugin install launchthesis@launchthesis
 ```
 
@@ -158,7 +157,7 @@ instead so every clone picks it up automatically:
 ```json
 {
   "extraKnownMarketplaces": {
-    "launchthesis": { "source": { "source": "github", "repo": "malikriv/builderkit" } }
+    "launchthesis": { "source": { "source": "github", "repo": "malikriv/Launch_Thesis" } }
   },
   "enabledPlugins": { "launchthesis@launchthesis": true }
 }
