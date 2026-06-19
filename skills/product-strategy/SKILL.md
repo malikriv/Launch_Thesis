@@ -103,6 +103,19 @@ strategy-armed asset) → on PASS, validate emits the AI-builder handoff. The st
 conversion/growth plays arm the validate sprint's asset + GTM; the declined plays become its
 brand-safety guardrails. The build itself is the user's downstream concern.
 
+## Next (concierge feedback block)
+
+Close the run with the standard block so the loop stays self-navigating:
+
+- **Where you are** — `Refine ✓ → Research ✓ → Strategy ✓ → Validate ◀ next · step 4 of 4`.
+- **What just happened** — the sprint is armed: the converting-page brief's lead plays, the
+  metric→play wiring, and the declined plays the page must respect.
+- **What's next** — **run `/launchthesis` to start the 48h validation sprint** (or
+  `/launchthesis:validate`).
+- **Helper note** — "Validate is the real gate: it needs a LIVE-mode Stripe, a data store +
+  host, and a landing page **you** build. ≤ $50 ad cap; aim for ~100–200 cold lands. Most
+  honest first sprints come back INCONCLUSIVE — thin traffic, not a failed idea."
+
 ## Provisioning (`product:` config block)
 
 If the block is missing/empty when strategy runs, capture it first (idempotent, like

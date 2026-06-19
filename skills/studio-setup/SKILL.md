@@ -86,8 +86,17 @@ Stand up the cross-product studio store and capture the `product:` block.
 
 ## End
 
-When the config is written and the studio store is provisioned, tell the
-founder: **setup is done — run `/launchthesis:discover <seed>` next.**
+When the config is written and the studio store is provisioned, close with the
+standard concierge feedback block:
+
+- **Where you are** — `Setup ✓ → Refine → Research → Strategy → Validate` (cold start
+  done; the loop hasn't begun yet).
+- **What just happened** — config + studio store provisioned; greenfield/app-free is
+  fine.
+- **What's next** — **run `/launchthesis` and it will start Refine + Research on your
+  seed** (or run `/launchthesis:discover <seed>` directly).
+- **Helper note** — "No app needed — an idea, a problem, or an audience is enough. A
+  cheap NO-GO in the next step is the product working, not failing."
 
 ## Drift repair
 
