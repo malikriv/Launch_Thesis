@@ -39,6 +39,7 @@ if [ "${1:-}" = "--complete" ]; then
     README.md \
     SKILL.md \
     templates/config.template.yaml \
+    commands/launchthesis.md \
     commands/setup.md \
     commands/discover.md \
     commands/strategy.md \
