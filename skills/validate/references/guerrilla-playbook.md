@@ -32,6 +32,16 @@ distribution-realist signal, not a stall).
 - **Borrow-distribution ask:** lead with value to the audience-holder; make it easy to
   say yes; two-sided benefit.
 
+## Inbound assist — comment-to-DM waitlist (warm-floor only)
+When the founder has a content surface (IG/TikTok reels), the **Comment-to-DM waitlist**
+play scales the named-list build: a keyword CTA -> Manychat auto-DM -> email capture.
+Contacts through the DM relationship are **`warm_dm` (weight 0.5)** and CANNOT clear the
+gate alone — run it as Lane A (warm floor) beside a Lane B that drives *non-follower*
+reach to the public `?src=cold_public` link. Play + cohort wiring:
+`skills/product-strategy/reference/manychat-waitlist-play.md`; copy:
+`templates/gtm/manychat-dm-scripts.md`; content engine:
+`templates/gtm/content-engine-prompt.md`.
+
 ## Anti-burn (protect the founder's standing across products)
 Stagger identical links; lead with value and put the link in a comment/DM follow-up;
 never repost the same pitch to a venue twice; a relaunch must change venue OR angle.
