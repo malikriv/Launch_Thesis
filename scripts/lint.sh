@@ -37,7 +37,9 @@ if [ "${1:-}" = "--complete" ]; then
     .claude-plugin/plugin.json \
     .claude-plugin/marketplace.json \
     README.md \
+    SKILL.md \
     templates/config.template.yaml \
+    commands/launchthesis.md \
     commands/setup.md \
     commands/discover.md \
     commands/strategy.md \

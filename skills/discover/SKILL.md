@@ -148,6 +148,21 @@ On finishing (including kills at any tier), append a row to
 `.launchthesis/studio/validation-log.md` (seed, archetype, tier reached, verdict).
 Aggregate patterns only — no PII in `studio/`.
 
+## Next (concierge feedback block)
+
+Close the run with the standard block so the loop stays self-navigating:
+
+- **Where you are** — `Refine ✓ → Research ✓ → Strategy ◀ next → Validate · step 2 of 4`
+  on a Gate D pass; on a kill, say the loop stopped here.
+- **What just happened** — the verdict in plain words: the named, versioned wedge + the
+  pulse evidence on a pass; the tier reached + why on a cheap kill (a NO-GO is a
+  first-class win, never softened).
+- **What's next** — pass → **run `/launchthesis` to arm the sprint with a GTM + conversion
+  plan** (or `/launchthesis:strategy`). Kill → the cheapest adjacent wedge to try, or
+  shelve.
+- **Helper note** — "Strategy is a go-to-market + conversion plan, not a build plan — it
+  arms the validation sprint and flags plays your brand should decline."
+
 ## Multi-agent quick reference
 
 | Work | Agent | Parallel? |

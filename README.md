@@ -167,6 +167,15 @@ instead so every clone picks it up automatically:
 
 ## Quickstart
 
+**The one command:** run **`/launchthesis`** any time. It's a state-aware concierge —
+it figures out where you are in the loop, tells you what just happened and what's next,
+runs the next single step, then stops. You never have to remember the sequence below; it
+routes you. (The four named commands remain as escape hatches and are what it runs under
+the hood.) On a true cold start, just run `/launchthesis` and hand it your seed — a
+problem, an idea, or a population.
+
+Under the hood, the loop is:
+
 1. Run `/launchthesis:setup` once per project. It detects your stack and writes
    `.launchthesis/config.yaml`. No app required — point it at an idea and it writes an
    app-free config.
@@ -185,6 +194,7 @@ next.
 
 | Command | What it does |
 | --- | --- |
+| `/launchthesis` | **The one command.** State-aware concierge: locates your phase, reports what just happened + what's next, runs the next single step, then pauses. Routes to the four below — run this every time. |
 | `/launchthesis:setup` | Detect stack, write `.launchthesis/config.yaml`. No app required — an idea is enough. |
 | `/launchthesis:discover <seed>` | Refine + Research: frame → triage (can NO-GO fast) → demand pulse → red-team hardening → versioned **Launch Thesis** + named wedge. |
 | `/launchthesis:strategy [scope]` | GTM + conversion strategy that arms the sprint: weight families → map/tier plays → flag declined plays → wire metrics. Not a build planner. |

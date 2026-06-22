@@ -195,6 +195,30 @@ converts across >= `studio.promote_after_k` runs AND >= 2 distinct ICPs. Log a
 panel-vs-outcome entry when the market confirms or refutes a discover red-team call; tie a
 `wedge_refuted` outcome into the wedge-patterns ledger. No PII in `studio/`.
 
+## Next (concierge feedback block)
+
+Close the run with the standard block so the loop stays self-navigating. The exact next
+action depends on the Gate V outcome (report the `gate-run.mjs` verdict verbatim — the
+builder is not the scorer):
+
+- **PASS** — `Refine ✓ → Research ✓ → Strategy ✓ → Validate ✓ · demand proven`. The
+  AI-builder handoff is written. **Next: paste its build prompt into your builder** —
+  LaunchThesis stops at proven demand; your build, your tickets. Or run `/launchthesis` to
+  start the next idea.
+- **INCONCLUSIVE (channel_thin)** — thin traffic, not a failed idea. **Next: run
+  `/launchthesis` to extend once / re-channel.** Never kicks back to discover on thin
+  traffic.
+- **FAIL → copy_weak** — a stronger page should convert. **Next: run `/launchthesis` to
+  ship the next copy/offer variant** (bounded by `validate.max_rounds`).
+- **FAIL → wedge_refuted** — the market ruled on the *position*. **Next: run
+  `/launchthesis` to re-cut the wedge** (a new version, back through Research) — or stop if
+  the receipts say stop.
+- **NOT-MEASURABLE** — instrumentation/payments not proven. **Next: run `/launchthesis` to
+  fix the plumbing and re-poll** (a sandbox pay-proof never counts).
+
+Helper note to surface: "A NO here is a first-class win — you killed a dead idea cheap.
+The honesty floor stays non-negotiable: no fabricated proof, no softened signal."
+
 ## Multi-agent quick reference
 | Work | Agent | Parallel? |
 |---|---|---|

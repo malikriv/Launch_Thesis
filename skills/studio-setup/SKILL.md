@@ -92,17 +92,25 @@ Stand up the cross-product studio store and capture the `product:` block.
 
 ## End — orient the founder
 
-When the config is written and the studio store is provisioned:
+When the config is written and the studio store is provisioned, close with the
+standard concierge feedback block, built on the shared communication conventions
+(`${CLAUDE_PLUGIN_ROOT}/skills/shared/communication.md`):
 
-1. **Render the loop orientation** from
-   `${CLAUDE_PLUGIN_ROOT}/skills/shared/communication.md` §6 — the "you are here" map of
-   Refine → Research → Strategy → Validate, what each pass produces, and that a cheap NO-GO
-   is a win. This is the founder's first-run onboarding: show the full map on a fresh setup;
-   on an idempotent re-run, skip the map and print only the footer.
-2. **Print the signpost footer** (communication §2), echoing the real paths written:
-   - `.launchthesis/config.yaml` (plus any infra routes copied, with their project paths)
-   - `.launchthesis/studio/playbook.md` and `.launchthesis/studio/validation-log.md`
-   - `Next: /launchthesis:discover <seed>`
+1. **Render the loop orientation** (communication §6) — the "you are here" map of
+   Refine → Research → Strategy → Validate, what each pass produces, and that a cheap
+   NO-GO is a win. This is the founder's first-run onboarding: show the full map on a
+   fresh setup; on an idempotent re-run, skip the map and print only the footer below.
+2. **Close with the concierge feedback block** (the signpost footer, communication §2):
+   - **Where you are** — `Setup ✓ → Refine → Research → Strategy → Validate` (cold start
+     done; the loop hasn't begun yet).
+   - **What just happened** — config + studio store provisioned; greenfield/app-free is
+     fine. Echo the real paths written: `.launchthesis/config.yaml` (plus any infra
+     routes copied), `.launchthesis/studio/playbook.md`, and
+     `.launchthesis/studio/validation-log.md`.
+   - **What's next** — **run `/launchthesis` and it will start Refine + Research on your
+     seed** (or run `/launchthesis:discover <seed>` directly).
+   - **Helper note** — "No app needed — an idea, a problem, or an audience is enough. A
+     cheap NO-GO in the next step is the product working, not failing."
 
 End on the plain line: **setup is done — run `/launchthesis:discover <seed>` next.**
 

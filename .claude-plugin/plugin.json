@@ -1,6 +1,7 @@
 {
   "name": "launchthesis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "LaunchThesis — the idea-validation loop that won't lie to you: prove real cold demand before you build (or get told not to). Refine → Research → Validate, with a playbook that compounds. Per-project config in .launchthesis/config.yaml.",
-  "author": { "name": "malikriv" }
+  "author": { "name": "malikriv" },
+  "skills": ["./", "./skills"]
 }
