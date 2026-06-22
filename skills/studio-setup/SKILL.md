@@ -19,10 +19,16 @@ template, and provision the studio store + the `product:` block. The flow is
 Idea-stage is the normal case here — LaunchThesis forms and proves a launch
 thesis *before* there's an app. Setup does not require a buildable project.
 
+**Communicate** per `${CLAUDE_PLUGIN_ROOT}/skills/shared/communication.md` — one voice, a
+`Setup · step n/3` breadcrumb as you enter each step, and a signpost footer that echoes
+every path written plus the next command. Gloss any first-use jargon from
+`${CLAUDE_PLUGIN_ROOT}/skills/shared/glossary.md`.
+
 ## Step 1 — Detect (light)
 
-Read what's cheaply available to fill the slim config — no testing-driver,
-maestro, playwright, or Linear detection.
+Read what's cheaply available to fill the slim config — no build, test-runner,
+or ticketing detection. LaunchThesis stops at validated demand; it never owns the
+build, the tests, or the tickets.
 
 - **Project name** — from `package.json` `name`, the repo directory, or ask.
 - **Stack (optional)** — a light read of `package.json`/lockfiles/layout if an
@@ -44,8 +50,8 @@ showing a diff first.
 
 The slim config carries only `project`, `docs`, `product`, `discover`,
 `validate`, `studio`, and `modules` (`modules` is just
-`discover / product / validate / studio`). There is no `commands:`, `testing:`,
-`linear:`, or `delivery:` block.
+`discover / product / validate / studio`). There is no `commands:` block and no
+build, test, or delivery config — that execution scope is deliberately out of scope.
 
 ## Step 3 — Provision studio + product
 
@@ -84,19 +90,29 @@ Stand up the cross-product studio store and capture the `product:` block.
   - Adapt the handler signature to the project's framework if it isn't
     Vercel/Node.
 
-## End
+## End — orient the founder
 
 When the config is written and the studio store is provisioned, close with the
-standard concierge feedback block:
+standard concierge feedback block, built on the shared communication conventions
+(`${CLAUDE_PLUGIN_ROOT}/skills/shared/communication.md`):
 
-- **Where you are** — `Setup ✓ → Refine → Research → Strategy → Validate` (cold start
-  done; the loop hasn't begun yet).
-- **What just happened** — config + studio store provisioned; greenfield/app-free is
-  fine.
-- **What's next** — **run `/launchthesis` and it will start Refine + Research on your
-  seed** (or run `/launchthesis:discover <seed>` directly).
-- **Helper note** — "No app needed — an idea, a problem, or an audience is enough. A
-  cheap NO-GO in the next step is the product working, not failing."
+1. **Render the loop orientation** (communication §6) — the "you are here" map of
+   Refine → Research → Strategy → Validate, what each pass produces, and that a cheap
+   NO-GO is a win. This is the founder's first-run onboarding: show the full map on a
+   fresh setup; on an idempotent re-run, skip the map and print only the footer below.
+2. **Close with the concierge feedback block** (the signpost footer, communication §2):
+   - **Where you are** — `Setup ✓ → Refine → Research → Strategy → Validate` (cold start
+     done; the loop hasn't begun yet).
+   - **What just happened** — config + studio store provisioned; greenfield/app-free is
+     fine. Echo the real paths written: `.launchthesis/config.yaml` (plus any infra
+     routes copied), `.launchthesis/studio/playbook.md`, and
+     `.launchthesis/studio/validation-log.md`.
+   - **What's next** — **run `/launchthesis` and it will start Refine + Research on your
+     seed** (or run `/launchthesis:discover <seed>` directly).
+   - **Helper note** — "No app needed — an idea, a problem, or an audience is enough. A
+     cheap NO-GO in the next step is the product working, not failing."
+
+End on the plain line: **setup is done — run `/launchthesis:discover <seed>` next.**
 
 ## Drift repair
 
