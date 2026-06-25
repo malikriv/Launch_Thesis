@@ -1,9 +1,17 @@
-# Landing conversion — the kit briefs, the human builds
+# Landing conversion — the kit briefs, the human owns the page
 
-The kit does NOT generate a launch-ready page. Conversion is human-owned craft, and an
-auto-page would under-convert and **confound Gate V** (a FAIL becomes ambiguous between
-"no demand" and "bad page"). The kit produces a conversion BRIEF; the human builds and
-designs the page in their own tool and wires it to the kit's capture + WTP probe.
+Conversion is human-owned craft, and an unreviewed auto-page would under-convert and
+**confound Gate V** (a FAIL becomes ambiguous between "no demand" and "bad page"). So the
+kit produces a conversion BRIEF, and the human owns the final page. There are two ways to
+arrive at that page — both wire to the kit's capture + WTP probe, both must clear the
+rubric below before launch:
+
+- **Build-your-own** — the human designs the page in their own tool and reuses the wiring
+  (`${CLAUDE_PLUGIN_ROOT}/templates/landing/wiring-reference.html`). Most control.
+- **Fast-start** — copy the token-driven `page.template.html`, fill its placeholders from
+  this brief + config, then **review and edit it like your own** (it is a starting point,
+  not an auto-launch). Fastest path to a reputable page; the human review step is NOT
+  optional — an un-reviewed fast-start is exactly the confound this section warns against.
 
 ## What the kit produces (the brief)
 1. **Strategy** — the single outcome the page promises; the sharp ICP; the one primary

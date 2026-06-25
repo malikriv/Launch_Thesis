@@ -4,11 +4,25 @@ A provider-shaped scaffold for the 48-hour validation sprint. Copy into your pro
 fill the `{{TOKENS}}` from `.launchthesis/config.yaml` + the discover brief, wire the two
 connectors, deploy.
 
+## Two ways to get a page
+1. **Fast-start (`page.template.html`)** — a polished, self-contained, Narro-style launch
+   page. Copy it, replace the `{{TOKENS}}` (see `page.tokens.example.json` for a complete
+   filled example), review against the conversion rubric, deploy. Minutes, no build step.
+   Best when you want a reputable page *now* and will tune the copy by hand.
+2. **Build-your-own (`wiring-reference.html`)** — the minimal WIRING REFERENCE (not a
+   launch page): shows how a page calls `capture()` / `recordLand()` / `startPreauth()`.
+   You design the page in your own tool and reuse this wiring. Best when conversion craft
+   is the whole point and you want full control.
+
+Both wire to the **same** capture + WTP probe, so Gate V scores identically either way.
+The fast-start is an opt-in convenience — it does **not** remove the human review step:
+you still must clear `skills/validate/references/landing-conversion.md`'s rubric and the
+honesty floor before launch.
+
 ## Pieces
-- `wiring-reference.html` — a WIRING REFERENCE (not a launch page): shows how a page
-  calls `capture()` / `recordLand()` / `startPreauth()`. You build and design the real
-  page in your own tool (see `skills/validate/references/landing-conversion.md`) and
-  reuse this wiring. The kit ships no auto-page.
+- `page.template.html` — the fast-start launch page (token-driven, single file, mobile-first).
+- `page.tokens.example.json` — every `{{TOKEN}}` with a complete worked example to copy from.
+- `wiring-reference.html` — the minimal wiring reference for a build-your-own page.
 - `capture.js` — cookieless, idempotent client capture; cohort from the link's `?src=`.
 - `schema.sql` — the `launchthesis_events` table (unique `dedupe_key` = idempotency).
 - `payment-intent.mjs` — the HARD signal: a Stripe manual-capture **pre-auth** (no money moves).

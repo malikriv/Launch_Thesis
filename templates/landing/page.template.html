@@ -1,0 +1,286 @@
+<!doctype html>
+<!-- ============================================================================
+     LaunchThesis · reusable launch page  (Narro-style, single self-contained file)
+     ----------------------------------------------------------------------------
+     A polished, drop-in conversion page for a 48h–1wk validation sprint. Fill the
+     {{TOKENS}} from .launchthesis/config.yaml + the discover brief, review it
+     against skills/validate/references/landing-conversion.md, deploy. No build step.
+
+     It reuses the kit's wiring (capture.js / payment-intent.mjs) so the same Gate V
+     hard pay-proof flows through — this is an opt-in fast-start, NOT a replacement
+     for human-owned copy. You still must clear the conversion rubric before launch.
+
+     HONESTY FLOOR (non-negotiable — skills/validate/references/honesty-floor.md):
+       · No fabricated social proof, metrics, logos, or user counts. The "social
+         proof" row below is OFF by default and must carry a REAL number or stay off.
+       · State the real stage ("early access — not built yet") — keep {{HONESTY_LINE}}.
+       · A reserve is a refundable card HOLD, not a charge — keep {{REFUND_LINE}}.
+       · Ship the privacy notice (privacy.md) — the footer links it.
+     ============================================================================ -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{BRAND}} — {{HEADLINE}}</title>
+  <meta name="description" content="{{SUBHEAD}}" />
+
+  <!-- Social share card (set {{SHARE_IMAGE}} to an absolute URL, or remove these two). -->
+  <meta property="og:title" content="{{BRAND}} — {{HEADLINE}}" />
+  <meta property="og:description" content="{{SUBHEAD}}" />
+
+  <style>
+    /* ---- Theme tokens: change the accent in ONE place ---------------------- */
+    :root {
+      --accent: {{ACCENT}};            /* brand color, e.g. #5B3DF5 */
+      --accent-ink: #ffffff;           /* text on the accent */
+      --bg: #f6f6f7;
+      --surface: #ffffff;
+      --ink: #15131a;
+      --ink-soft: #6b6878;
+      --line: #e9e8ee;
+      --radius: 16px;
+      --shadow: 0 1px 2px rgba(20,16,40,.04), 0 12px 32px rgba(20,16,40,.06);
+      --max: 1080px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+              "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font);
+      line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; }
+    .wrap { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    /* ---- Header ----------------------------------------------------------- */
+    header { padding: 28px 0; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700;
+             font-size: 22px; letter-spacing: -.01em; text-decoration: none; }
+    .brand .mark { width: 26px; height: 26px; color: var(--accent); }
+
+    /* ---- Hero ------------------------------------------------------------- */
+    .hero { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center;
+            padding: 24px 0 56px; }
+    @media (min-width: 880px) { .hero { grid-template-columns: 1.05fr .95fr; gap: 56px; padding: 40px 0 72px; } }
+    h1 { font-size: clamp(40px, 7vw, 68px); line-height: 1.02; letter-spacing: -.03em;
+         font-weight: 800; margin: 0 0 20px; }
+    h1 .dot { color: var(--accent); }
+    .subhead { font-size: clamp(17px, 2.4vw, 20px); color: var(--ink-soft); margin: 0 0 32px; max-width: 30ch; }
+
+    /* feature rows */
+    .features { display: grid; gap: 18px; margin: 0 0 36px; }
+    .feature { display: flex; gap: 14px; align-items: flex-start; }
+    .feature .ic { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 11px;
+      background: color-mix(in srgb, var(--accent) 12%, white); color: var(--accent);
+      display: grid; place-items: center; }
+    .feature .ic svg { width: 20px; height: 20px; }
+    .feature h3 { margin: 2px 0 2px; font-size: 16px; font-weight: 700; }
+    .feature p  { margin: 0; font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Showcase (phone-style frame; holds {{SHOWCASE_IMAGE}} or a graceful blank) */
+    .showcase { display: flex; justify-content: center; }
+    .phone { width: 300px; max-width: 86vw; background: #0f0f12; border-radius: 44px;
+      padding: 12px; box-shadow: var(--shadow); }
+    .phone .screen { background: var(--surface); border-radius: 33px; overflow: hidden;
+      aspect-ratio: 9 / 19.5; display: grid; place-items: center; }
+    .phone .screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .phone .placeholder { color: var(--ink-soft); font-size: 13px; text-align: center; padding: 24px; }
+
+    /* ---- Conversion block ------------------------------------------------- */
+    .convert { text-align: center; padding: 8px 0 72px; }
+    .convert h2 { font-size: clamp(26px, 4vw, 34px); letter-spacing: -.02em; margin: 0 0 12px; }
+    .convert .lede { color: var(--ink-soft); max-width: 48ch; margin: 0 auto 28px; }
+
+    form.waitlist { display: flex; gap: 10px; max-width: 480px; margin: 0 auto 14px;
+      background: var(--surface); padding: 8px; border-radius: var(--radius);
+      box-shadow: var(--shadow); flex-wrap: wrap; }
+    form.waitlist input { flex: 1 1 200px; border: 0; background: transparent; padding: 14px 16px;
+      font-size: 16px; color: var(--ink); outline: none; min-width: 0; }
+    .btn { border: 0; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 700;
+      border-radius: 11px; padding: 14px 24px; background: var(--accent); color: var(--accent-ink);
+      transition: transform .04s ease, filter .15s ease; }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:active { transform: translateY(1px); }
+    .btn[disabled] { opacity: .55; cursor: default; }
+
+    /* social proof — OFF by default (honesty floor). Real number only. */
+    .socialproof { display: none; align-items: center; justify-content: center; gap: 8px;
+      color: var(--ink-soft); font-size: 14px; margin: 8px 0 0; }
+    .socialproof[data-enabled="true"] { display: flex; }
+
+    /* WTP probe (the two real signals) */
+    .wtp { margin: 36px auto 0; max-width: 480px; border-top: 1px solid var(--line); padding-top: 28px; }
+    .wtp .hint { color: var(--ink-soft); font-size: 14px; margin: 0 0 14px; }
+    #card-mount { display: none; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 11px; padding: 14px 16px; margin: 0 0 12px; text-align: left; }
+    .wtp-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn.ghost { background: transparent; color: var(--accent);
+      box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, white); }
+    .reserved { display:none; color: var(--accent); font-weight:600; font-size:14px; margin-top:12px; }
+
+    .honesty { color: var(--ink-soft); font-size: 13px; margin: 22px auto 0; max-width: 52ch; }
+    .honesty a { color: var(--ink-soft); }
+
+    /* ---- Footer ----------------------------------------------------------- */
+    footer { border-top: 1px solid var(--line); padding: 36px 0; color: var(--ink-soft); font-size: 14px; }
+    .foot-row { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between; }
+    footer .tagline { max-width: 28ch; }
+
+    /* capture-failure banner injected by capture.js (#bk-warn) sits at body top — fine. */
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="/">
+        <!-- Swap this mark for your logo, or keep the lettered token below. -->
+        <svg class="mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M5 3a2 2 0 0 0-2 2v14l4.2-3.1A2 2 0 0 1 8.6 15H10V5a2 2 0 0 0-2-2H5Zm9 0a2 2 0 0 0-2 2v14l4.2-3.1a2 2 0 0 1 1.4-.9H19V5a2 2 0 0 0-2-2h-3Z"/>
+        </svg>
+        {{BRAND}}
+      </a>
+    </header>
+
+    <!-- ============================ HERO ============================ -->
+    <main class="hero">
+      <section>
+        <!-- Headline names a SPECIFIC outcome for the ICP. The accented final word/punctuation
+             is the only flourish — keep the promise concrete, not clever. -->
+        <h1>{{HEADLINE}}<span class="dot">.</span></h1>
+        <p class="subhead">{{SUBHEAD}}</p>
+
+        <div class="features">
+          <div class="feature">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0-3 6.5A4 4 0 0 0 8 19a4 4 0 0 0 8 0 4 4 0 0 0 3-6.5A4 4 0 0 0 16 6a4 4 0 0 0-4-4Z"/></svg></span>
+            <div><h3>{{FEATURE_1_TITLE}}</h3><p>{{FEATURE_1_BODY}}</p></div>
+          </div>
+          <div class="feature">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 4.8L19 9l-4.8 1.9L12 16l-1.9-5.1L5 9l5.1-1.2L12 3Z"/></svg></span>
+            <div><h3>{{FEATURE_2_TITLE}}</h3><p>{{FEATURE_2_BODY}}</p></div>
+          </div>
+          <div class="feature">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12.5 11 14.5 15.5 10"/><circle cx="12" cy="12" r="9"/></svg></span>
+            <div><h3>{{FEATURE_3_TITLE}}</h3><p>{{FEATURE_3_BODY}}</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SHOWCASE: a real screenshot/demo is the credibility signal (rubric). If you have
+           none yet, the blank frame is honest — do NOT fake a product shot. -->
+      <aside class="showcase">
+        <div class="phone">
+          <div class="screen">
+            <!-- Set {{SHOWCASE_IMAGE}} to a screenshot URL, or delete the <img> to show the frame. -->
+            <img src="{{SHOWCASE_IMAGE}}" alt="{{BRAND}} preview"
+                 onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',textContent:'A preview of what you’re building goes here.'}))" />
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- ======================== CONVERSION ========================= -->
+    <section class="convert">
+      <h2>{{WAITLIST_HEADING}}</h2>
+      <p class="lede">{{WAITLIST_SUB}}</p>
+
+      <!-- Primary CTA: the waitlist / activation (soft tier). One ask. -->
+      <form class="waitlist" id="waitlist" novalidate>
+        <input id="email" type="email" required autocomplete="email" placeholder="you@email.com" aria-label="Email address" />
+        <button class="btn" type="submit" id="join">{{CTA}}</button>
+      </form>
+
+      <!-- Social proof — DISABLED by default. To enable, set data-enabled="true" AND put a
+           REAL number in {{SOCIAL_PROOF}} (e.g. from your own store count). Fabricated
+           counts violate the honesty floor; an empty waitlist shows nothing, which is fine. -->
+      <p class="socialproof" data-enabled="false">{{SOCIAL_PROOF}}</p>
+
+      <!-- Two-signal willingness-to-pay probe. HARD = real refundable card pre-auth (counts
+           toward Gate V). SOFT = intent click (weight 0). Whole block degrades to soft-only
+           in planner-mode (no Stripe key) — see payment-intent.mjs. -->
+      <div class="wtp">
+        <p class="hint">{{WTP_PROMPT}}</p>
+        <div id="card-mount" aria-label="Card details"></div>
+        <div class="wtp-actions">
+          <button class="btn" id="reserve">Reserve at {{PRICE}} — refundable hold</button>
+          <button class="btn ghost" id="interested">I'd pay for this</button>
+        </div>
+        <p class="reserved" id="reserved">Got it — your interest is recorded. We'll be in touch.</p>
+      </div>
+
+      <p class="honesty">
+        {{HONESTY_LINE}} {{REFUND_LINE}} ·
+        <a href="privacy.md">Privacy</a>
+      </p>
+    </section>
+  </div>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer>
+    <div class="wrap foot-row">
+      <a class="brand" href="/" style="font-size:18px">
+        <svg class="mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="width:20px;height:20px">
+          <path d="M5 3a2 2 0 0 0-2 2v14l4.2-3.1A2 2 0 0 1 8.6 15H10V5a2 2 0 0 0-2-2H5Zm9 0a2 2 0 0 0-2 2v14l4.2-3.1a2 2 0 0 1 1.4-.9H19V5a2 2 0 0 0-2-2h-3Z"/>
+        </svg>
+        {{BRAND}}
+      </a>
+      <span class="tagline">{{TAGLINE}}</span>
+      <span>© {{YEAR}} {{BRAND}}. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <!-- ============================ WIRING ============================
+       Reuses the kit modules verbatim. recordLand() fires the exposure ping from a
+       tracked ?src= link; the form records a signup; the probe records intent/payment. -->
+  <script type="module">
+    import { capture, recordLand } from "./capture.js";
+    import { startPreauth } from "./payment-intent.mjs";
+
+    recordLand();
+
+    const $ = (id) => document.getElementById(id);
+
+    // Waitlist (soft signup)
+    $("waitlist").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = $("email").value.trim();
+      if (!email || !email.includes("@")) { $("email").focus(); return; }
+      const btn = $("join"); btn.disabled = true; btn.textContent = "Joining…";
+      await capture("signup", { email });
+      btn.textContent = "You're on the list ✓";
+    });
+
+    // SOFT willingness-to-pay (weight 0 — an honest "interest" signal only)
+    $("interested").addEventListener("click", async () => {
+      await capture("intent_click");
+      $("reserved").style.display = "block";
+    });
+
+    // HARD willingness-to-pay (refundable pre-auth). startPreauth degrades to a soft
+    // intent_click when Stripe isn't wired, so this is always safe to call.
+    $("reserve").addEventListener("click", async () => {
+      const btn = $("reserve"); btn.disabled = true; btn.textContent = "Processing…";
+      const res = await startPreauth(capture);
+      btn.disabled = false;
+      btn.textContent = res?.ok ? "Reserved ✓" : "Reserve at {{PRICE}} — refundable hold";
+      if (res?.ok || res?.mode === "soft") $("reserved").style.display = "block";
+    });
+
+    // ---- Optional: mount a Stripe card Element for the HARD pay-proof ----------
+    // Uncomment + set your LIVE publishable key to enable real pre-auth holds. Without
+    // this, the reserve button records an honest SOFT signal (no fabricated PASS).
+    //
+    // const STRIPE_PK = "pk_live_xxx";                 // validate.payments.* (LIVE only)
+    // const s = document.createElement("script");
+    // s.src = "https://js.stripe.com/v3/";
+    // s.onload = () => {
+    //   window.Stripe = window.Stripe || Stripe;
+    //   const elements = window.Stripe(STRIPE_PK).elements();
+    //   window.bkCardElement = elements.create("card");
+    //   const mount = $("card-mount"); mount.style.display = "block";
+    //   window.bkCardElement.mount(mount);
+    // };
+    // document.head.appendChild(s);
+  </script>
+</body>
+</html>

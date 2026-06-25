@@ -1,0 +1,33 @@
+{
+  "_comment": "Example token fill for page.template.html. Copy the page, replace each {{TOKEN}} with the value below (or your own), review against landing-conversion.md, deploy. Sourced from .launchthesis/config.yaml + your discover brief. This example mirrors a Narro-style concept but is honesty-floor clean: SOCIAL_PROOF is intentionally empty (no fabricated counts).",
+
+  "BRAND": "narro",
+  "ACCENT": "#5B3DF5",
+
+  "HEADLINE": "A realtime copilot for your thoughts",
+  "SUBHEAD": "Narro listens, understands, and helps you turn overthinking into clarity and action.",
+
+  "FEATURE_1_TITLE": "Capture anything",
+  "FEATURE_1_BODY": "Jot down your thoughts, instantly.",
+  "FEATURE_2_TITLE": "AI understands",
+  "FEATURE_2_BODY": "Find patterns, emotions & insights.",
+  "FEATURE_3_TITLE": "Take action",
+  "FEATURE_3_BODY": "Get clarity, create tasks, make progress.",
+
+  "SHOWCASE_IMAGE": "",
+
+  "WAITLIST_HEADING": "Be the first to try Narro",
+  "WAITLIST_SUB": "We're building Narro to help you think clearer and live better. Join the waitlist and get early access.",
+  "CTA": "Join waitlist",
+
+  "SOCIAL_PROOF": "",
+  "_SOCIAL_PROOF_note": "Leave empty unless you have a REAL number. To show it, set the .socialproof element's data-enabled=\"true\" in the HTML and put e.g. 'Join 312 others on the waitlist' here. Never fabricate a count.",
+
+  "WTP_PROMPT": "Want it sooner? Reserve your spot — a small refundable hold moves you to the front of the line.",
+  "PRICE": "$5",
+  "REFUND_LINE": "It's a refundable hold, not a charge — released if we don't ship.",
+
+  "HONESTY_LINE": "Early access — not built yet.",
+  "TAGLINE": "Your space for thoughts. Your path to clarity.",
+  "YEAR": "2026"
+}
